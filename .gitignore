@@ -32,6 +32,7 @@ secrets.json
 .idea/
 
 # OS-specific files
+.DS_Store
 .db_sqlite3
 .settings.py
 
@@ -49,3 +50,24 @@ pytestdebug.log
 *.egg-info/
 dist/
 build/
+
+# Node.js dependencies (React)
+/node_modules
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+
+# Production
+/build
+
+# Misc
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
