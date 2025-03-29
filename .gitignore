@@ -3,6 +3,27 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+
+# Ignore node_modules
+node_modules/
+
+# Ignore log files
+*.log
+
+# Ignore environment files
+pyvenv.cfg
+.env
+
+# Exclude this directory
+Documentation/
+Design diagrams/
+.vscode/
+
+db.sqlite3
+
+settings.py
+asgi.py
+
 # User-specific files
 *.rsuser
 *.suo
