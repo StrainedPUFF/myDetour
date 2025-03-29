@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    {% load render_bundle from webpack_loader %}
+    <link rel="icon" href="{% static 'favicon.ico' %}" />
+    <title>React App</title>
+</head>
+<body>
+    <div id="root"></div> <!-- React Mount Point -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        console.log('Document is fully loaded');
+        console.log('Root element check:', document.getElementById('root'));
+    });
+</script>
+<script src="/static/frontend/main.js"></script>
+    {% render_bundle 'main' %}    
+</body>
+</html>

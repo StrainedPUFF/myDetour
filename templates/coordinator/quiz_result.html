@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Result</title>
+</head>
+<body>
+    <nav class="nav">
+        <!-- <img src="Visual assets/logo.jpg" alt="Larel Logo"> -->
+        <ul>
+            <li><a href="{% url 'Coordinator:dashboard' %}">Home</a></li>
+            <li><a href="{% url 'Coordinator:login' %}">Sign in</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <!-- <li><a href="user-profile.html" class="login-button">Profile</a></li> -->
+        </ul>
+    </nav>
+    <h1>Quiz Result</h1>
+    <p>Your score: {{ score }}</p>
+</body>
+</html>

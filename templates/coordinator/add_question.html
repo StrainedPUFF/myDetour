@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Question and Answers</title>
+    <script>
+        function addAnswer(questionIndex) {
+            const answersDiv = document.getElementById(`answers_${questionIndex}`);
+            const newAnswerIndex = answersDiv.childElementCount;
+            const newAnswerDiv = document.createElement('div');
+            newAnswerDiv.innerHTML = `
+                <label for="answer_${questionIndex}_${newAnswerIndex}_text">Answer ${newAnswerIndex + 1}:</label>
+                <input type="text" name="answer_${questionIndex}_${newAnswerIndex}_text" id="answer_${questionIndex}_${newAnswerIndex}_text">
+                <label for="answer_${questionIndex}_${newAnswerIndex}_is_correct">Correct:</label>
+                <input type="checkbox" name="answer_${questionIndex}_${newAnswerIndex}_is_correct" id="answer_${questionIndex}_${newAnswerIndex}_is_correct">
+            `;
+            answersDiv.appendChild(newAnswerDiv);
+        }
+
+        function addQuestion() {
+            const questionsDiv = document.getElementById('questions');
+            const newQuestionIndex = questionsDiv.childElementCount;
+            const newQuestionDiv = document.createElement('div');
+            newQuestionDiv.innerHTML = `
+                <h3>Question ${newQuestionIndex + 1}</h3>
+                <label for="question_${newQuestionIndex}_text">Text:</label>
+                <input type="text" name="question_${newQuestionIndex}_text" id="question_${newQuestionIndex}_text">
+                <div id="answers_${newQuestionIndex}">
+                    <button type="button" onclick="addAnswer(${newQuestionIndex})">Add Answer</button>
+                </div>
+            `;
+            questionsDiv.appendChild(newQuestionDiv);
+        }
+    </script>
+</head>
+<body>
+    <h1>Add Questions and Answers to {{ quiz.title }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div id="questions"></div>
+        <button type="button" onclick="addQuestion()">Add Question</button>
+        <button type="submit">Submit</button>
+    </form>
+    
+</body>
+</html>

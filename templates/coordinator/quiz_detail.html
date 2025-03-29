@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ quiz.title }}</title>
+</head>
+<body>
+    <h1>{{ quiz.title }}</h1>
+    <p>{{ quiz.description }}</p>
+
+    <h2>Questions</h2>
+    {% for question in quiz.questions.all %}
+        <div>
+            <h3>{{ question.text }}</h3>
+            <ul>
+                {% for answer in question.answers.all %}
+                    <li>{{ answer.text }}{% if answer.is_correct %} (Correct){% endif %}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+    <a href="{% url 'Coordinator:dashboard' %}">Back to the dashboard</a>
+</body>
+</html>

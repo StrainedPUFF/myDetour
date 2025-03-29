@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Already Attempted</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'coordinator/styles.css' %}">
+</head>
+<body>
+    <h1>Quiz Already Attempted</h1><br>
+    <p>It looks like you've already attempted this quiz. You can only attempt each quiz once.</p>
+    <a href="{% url 'Coordinator:dashboard' %}">Back to Dashboard</a>
+</body>
+</html>
