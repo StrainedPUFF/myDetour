@@ -1,0 +1,30 @@
+{
+  "status": "done",
+  "assets": {
+    "364.main.js": {
+      "name": "364.main.js",
+      "path": "C:\\Users\\wesle\\OneDrive\\Documents\\VLCS\\myProject\\virtuallcs\\frontend\\staticfiles\\364.main.js"
+    },
+    "364.main.js.map": {
+      "name": "364.main.js.map",
+      "path": "C:\\Users\\wesle\\OneDrive\\Documents\\VLCS\\myProject\\virtuallcs\\frontend\\staticfiles\\364.main.js.map"
+    },
+    "main.js": {
+      "name": "main.js",
+      "path": "C:\\Users\\wesle\\OneDrive\\Documents\\VLCS\\myProject\\virtuallcs\\frontend\\staticfiles\\main.js"
+    },
+    "main.js.LICENSE.txt": {
+      "name": "main.js.LICENSE.txt",
+      "path": "C:\\Users\\wesle\\OneDrive\\Documents\\VLCS\\myProject\\virtuallcs\\frontend\\staticfiles\\main.js.LICENSE.txt"
+    },
+    "main.js.map": {
+      "name": "main.js.map",
+      "path": "C:\\Users\\wesle\\OneDrive\\Documents\\VLCS\\myProject\\virtuallcs\\frontend\\staticfiles\\main.js.map"
+    }
+  },
+  "chunks": {
+    "main": [
+      "main.js"
+    ]
+  }
+}
