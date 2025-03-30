@@ -1,10 +1,68 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Document</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: url("{% static 'images/login.webp' %}");
+            /* background: linear-gradient(135deg, #f5f7fa, #c3eafe); Calming gradient */
+            margin: 0;
+            padding: 0;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 1.8em;
+            color: #4caf50; /* Positive green */
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        ul {
+            color: #ff4d4d; /* Error red */
+            padding: 10px;
+            border: 1px solid #ffcccc;
+            background-color: #ffe5e5;
+            border-radius: 8px;
+        }
+        button {
+            background-color: #4caf50; /* Friendly green */
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #3e8e41; /* Deeper green */
+            transform: scale(1.05);
+        }
+    </style>
 </head>
 <body>
-    <h1>Upload Document for Session: {{ session.name }}</h1>
+    <div class="container">
+        <h1>Upload Document for Session: {{ session.name }}</h1>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
@@ -19,5 +77,6 @@
             {% endif %}
             <button type="submit">Upload PDF</button>
         </form>
+    </div>
 </body>
 </html>
