@@ -3,6 +3,7 @@ from django.contrib.auth import login
 from django.shortcuts import render, redirect
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 from Discussion.models import Session,Quiz, Question, Answer,QuizRecord
 from django.utils import timezone
 from .forms import SessionForm
@@ -19,6 +20,7 @@ from google.auth.exceptions import RefreshError
 from datetime import timedelta
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
+from django.views.decorators.cache import cache_control
 from .forms import DocumentForm
 from django.http import JsonResponse, Http404
 from django.utils.timezone import now
@@ -64,7 +66,9 @@ def login_view(request):
         errors = None
     return render(request, 'coordinator/login.html', {'form': form, 'errors': errors})
 
-
+def logout_view(request):
+    logout(request)
+    return redirect('Coordinator:login')
 
 def home_view(request):
     return render(request, 'coordinator/home.html')
@@ -135,6 +139,7 @@ def profile_view(request):
 #     })
 
 @login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def dashboard_view(request):
     user = request.user
     joined_sessions = user.joined_sessions.filter(date__gte=timezone.now() - timedelta(hours=3)).distinct()

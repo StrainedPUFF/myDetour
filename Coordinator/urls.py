@@ -26,5 +26,6 @@ urlpatterns = [
     path('attempt_once/', views.attempt_once, name='attempt_once'),
     path('homepage_to_signup/', views.homepage_to_signup, name= 'homepage_to_signup'),
     path('homepage_to_login/', views.homepage_to_login, name= 'homepage_to_login'),
+    path('logout/', views.logout_view, name='logout'),
     path('join_session/<uuid:session_id>/', views.join_session, name='join_session')
 ]
