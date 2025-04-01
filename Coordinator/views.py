@@ -11,25 +11,16 @@ from django.contrib import messages
 from django.db import transaction, IntegrityError
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import QuestionForm, AnswerForm, QuizForm
-from django.conf import settings
-from google_auth_oauthlib.flow import Flow
-from google.oauth2.credentials import Credentials
-from google.auth.transport.requests import Request
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.exceptions import RefreshError
 from datetime import timedelta
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.http import HttpResponseRedirect
 from django.views.decorators.cache import cache_control
 from .forms import DocumentForm
 from django.http import JsonResponse, Http404
 from django.utils.timezone import now
 from django.urls import reverse
-import requests
-import http.client
-import json
-import requests
-import base64
+from django.views.generic import TemplateView
+import uuid
 import os
 
 def homepage_to_signup(request):
@@ -79,64 +70,24 @@ def profile_view(request):
     return render(request, 'coordinator/userprofile.html', {'user': user})
 
 
-# @login_required
-# def dashboard_view(request):
-#     user = request.user
-#     joined_sessions = user.joined_sessions.distinct()  # Ensure no duplicates
-#     upcoming_sessions = Session.objects.filter(date__gte=timezone.now()).exclude(users_joined=user).distinct()  # Ensure no duplicates
-#     quiz_records = user.quiz_records.all()
+def create_quiz_for_session(session, quiz_data):
+    try:
+        # Ensure the session is fully saved
+        session.refresh_from_db()  # Reload session from the database to ensure it is finalized
 
-#     if request.method == 'POST':
-#         form = SessionForm(request.POST)
-#         quiz_form = QuizForm(request.POST)
-#         print(f"Form data: {request.POST}")  # Debugging statement for form data
-#         if form.is_valid():
-#             print("Form is valid.")
-#             try:
-#                 new_session = form.save(commit=False)
-#                 new_session.host = user
-#                 new_session.save()
-#                 new_session.users_joined.add(user)
+        quiz_form = QuizForm(quiz_data)
+        if quiz_form.is_valid():
+            quiz = quiz_form.save(commit=False)
+            quiz.session = session  # Explicitly associate quiz with the session
+            quiz.save()  # Save the quiz to generate its ID
+            session.quiz = quiz  # Link the quiz back to the session
+            session.save()  # Save the session with the quiz association
+            return True, quiz
+        else:
+            return False, quiz_form.errors
+    except Exception as e:
+        return False, str(e)
 
-#                 # Check if interactive session should be created
-#                 if form.cleaned_data['create_interactive'] and form.cleaned_data['interactive_description']:
-#                     InteractiveSession.objects.create(
-#                         session=new_session,
-#                         description=form.cleaned_data['interactive_description'],
-#                         host=user,
-#                     )
-#                 else:
-#                     # Create a quiz if not an interactive session
-#                     quiz_form = QuizForm(request.POST)
-#                     if quiz_form.is_valid():
-#                         quiz = quiz_form.save()
-#                         print(f"Quiz created with ID: {quiz.id}")
-#                         new_session.quiz = quiz
-#                         new_session.save()
-#                         print("Redirecting to add_question_and_answers")
-#                         return redirect('Coordinator:add_question_and_answers', quiz_id=quiz.id)
-
-#                 messages.success(request, f"Session {new_session.name} created and joined successfully.")
-#                 return redirect('Coordinator:dashboard')  # Redirect to refresh the form
-#             except Exception as e:
-#                 messages.error(request, f"Error creating session: {e}")
-#         else:
-#             print("Form errors:")
-#             for field, errors in form.errors.items():
-#                 print(f"{field}: {errors}")
-#             messages.error(request, "Form is not valid")
-#     else:
-#         form = SessionForm()
-#         quiz_form = QuizForm()
-
-#     return render(request, 'Coordinator/dashboard.html', {
-#         'user': user,
-#         'joined_sessions': joined_sessions,
-#         'upcoming_sessions': upcoming_sessions,
-#         'quiz_records': quiz_records,
-#         'form': form,
-#         'quiz_form': quiz_form
-#     })
 
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
@@ -148,59 +99,43 @@ def dashboard_view(request):
 
     if request.method == 'POST':
         form = SessionForm(request.POST)
-        quiz_form = QuizForm(request.POST)
-        print(f"Form data: {request.POST}")  # Debugging statement for form data
-
         if form.is_valid():
-            print("Form is valid.")
             try:
                 with transaction.atomic():
+                    # Create and save session
                     new_session = form.save(commit=False)
                     new_session.host = user
                     new_session.save()
                     new_session.users_joined.add(user)
 
-                    # Quiz creation logic
-                    print("Attempting to create quiz...")
+                    # Delegate quiz creation
                     quiz_data = request.POST.copy()
-                    quiz_data['title'] = new_session.name
-                    quiz_form = QuizForm(quiz_data)
+                    quiz_data['title'] = new_session.name  # Ensure title matches the QuizForm field
+                    success, result = create_quiz_for_session(new_session, quiz_data)
 
-                    if quiz_form.is_valid():
-                        print("Quiz form is valid.")
-                        quiz = quiz_form.save()
-                        print(f"Quiz created with ID: {quiz.id}")
-                        new_session.quiz = quiz
-                        new_session.save()
-                        print("Redirecting to the upload page")
+                    if success:
+                        # Redirect to the document upload page
+                        messages.success(request, f"Session '{new_session.name}' created and joined successfully!")
                         return redirect('Coordinator:upload_document', session_id=new_session.id)
                     else:
-                        print("Quiz form errors:")
-                        for field, errors in quiz_form.errors.items():
-                            print(f"{field}: {errors}")
-
-                messages.success(request, f"Session {new_session.name} created and joined successfully.")
-                return redirect('Coordinator:dashboard')  # Redirect to refresh the form
-
+                        messages.error(request, f"Quiz creation failed: {result}")
             except Exception as e:
                 messages.error(request, f"Error creating session: {e}")
         else:
-            print("Form errors:")
-            for field, errors in form.errors.items():
-                print(f"{field}: {errors}")
-            messages.error(request, "Form is not valid")
+            # Handle session form errors
+            messages.error(request, "Session form is not valid. Please correct the errors.")
     else:
         form = SessionForm()
-        quiz_form = QuizForm()
 
+    # Render the dashboard
     return render(request, 'Coordinator/dashboard.html', {
         'user': user,
         'joined_sessions': joined_sessions,
         'upcoming_sessions': upcoming_sessions,
         'quiz_records': quiz_records,
-        'form': form,
-        'quiz_form': quiz_form
+        'form': form
     })
+
 
 @login_required
 def book_session(request, session_id):
@@ -284,12 +219,15 @@ def add_question(request, quiz_id):
 @login_required
 def attempt_quiz(request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
-    session = get_object_or_404(Session, quiz=quiz)
+    session = get_object_or_404(Session, id=quiz.session.id)  # Get the session associated with the quiz
+
+    # Check if the user is part of the session
+    if request.user not in session.users_joined.all():
+        return HttpResponseForbidden()  # Return 403 if the user is not part of the session
 
     # Check if the user has already attempted the quiz
     if QuizRecord.objects.filter(quiz=quiz, user=request.user).exists():
-        # Handle the case where the user has already attempted the quiz
-        return redirect('Coordinator:attempt_once')
+        return redirect('Coordinator:attempt_once')  # Redirect if already attempted
 
     if request.method == 'POST':
         selected_answers = request.POST
@@ -304,10 +242,8 @@ def attempt_quiz(request, quiz_id):
                     user=request.user
                 )
         except IntegrityError:
-            # Handle the duplicate record case
-            return redirect('Coordinator:attempt_once')
+            return redirect('Coordinator:attempt_once')  # Handle duplicate record case
         except Exception as e:
-            # Handle other errors
             print(f"Error saving quiz record: {e}")
             messages.error(request, f"Error saving quiz record: {e}")
         
@@ -396,67 +332,64 @@ def join_session(request, session_id):
     # Default redirection to the dashboard
     return redirect('Coordinator:dashboard')
 
-# @login_required
-# def interactive_session_view(request, session_id):
-    # interactive_session = get_object_or_404(InteractiveSession, session_id=session_id)
-    # return render(request, 'Coordinator/interactivesessions.html', {'interactive_session': interactive_session})
-
-# @login_required
-# def create_session(request):
-#     if request.method == 'POST':
-#         session_form = SessionForm(request.POST)
-#         if session_form.is_valid():
-#             session = session_form.save(commit=False)
-#             create_interactive = request.POST.get('create_interactive') == 'on'  # Check if checkbox is checked
-            
-#             if create_interactive:
-#                 # For interactive session, no quiz creation, redirect to dashboard
-#                 session.save()
-#                 return redirect('Coordinator:dashboard')
-#             else:
-#                 # For regular session, redirect to add_question_and_answers
-#                 quiz_form = QuizForm(request.POST)
-#                 if quiz_form.is_valid():
-#                     quiz = quiz_form.save()
-#                     session.quiz = quiz
-#                     session.save()
-#                     return redirect('Coordinator:add_question_and_answers', quiz_id=quiz.id)
-#                 else:
-#                     # Handle case where quiz form is not valid (optional)
-#                     session.save()
-#                     return redirect('Coordinator:dashboard')
-#     else:
-#         session_form = SessionForm()
-#         quiz_form = QuizForm()
-
-#     return render(request, 'Coordinator/sessions.html', {'session_form': session_form, 'quiz_form': quiz_form})
 
 @login_required
 def add_question_and_answers(request, quiz_id):
     quiz = get_object_or_404(Quiz, pk=quiz_id)
+    question_form = QuestionForm()  # Initialize the form here
 
     if request.method == 'POST':
         print(request.POST)  # Debugging: Print POST data
         try:
             with transaction.atomic():
                 question_index = 0
+                question_count = 0
+                valid_answers_count = 0
+
                 while f'question_{question_index}_text' in request.POST:
                     question_text = request.POST.get(f'question_{question_index}_text')
                     if question_text.strip():  # Skip empty questions
-                        question = Question.objects.create(quiz=quiz, text=question_text)
+                        question_form = QuestionForm(data={'text': question_text})
+                        if question_form.is_valid():
+                            question = question_form.save(commit=False)
+                            question.quiz = quiz
+                            question.save()
+                            question_count += 1  # Increment question count
 
-                        answer_index = 1  # Start answer index from 1
-                        while f'answer_{question_index}_{answer_index}_text' in request.POST:
-                            answer_text = request.POST.get(f'answer_{question_index}_{answer_index}_text')
-                            is_correct = request.POST.get(f'answer_{question_index}_{answer_index}_is_correct') == 'on'
-                            print(f"Creating answer for question {question_index}: {answer_text}, correct: {is_correct}")  # Debugging: Print answer data
-                            Answer.objects.create(question=question, text=answer_text, is_correct=is_correct)
-                            answer_index += 1
+                            answer_index = 1  # Start answer index from 1
+                            answer_count = 0  # Reset answer count for this question
+                            while f'answer_{question_index}_{answer_index}_text' in request.POST:
+                                answer_text = request.POST.get(f'answer_{question_index}_{answer_index}_text')
+                                is_correct = request.POST.get(f'answer_{question_index}_{answer_index}_is_correct') == 'on'
+                                print(f"Creating answer for question {question_index}: {answer_text}, correct: {is_correct}")  # Debugging: Print answer data
+                                
+                                if answer_text.strip():  # Skip empty answers
+                                    answer_form = AnswerForm(data={'text': answer_text, 'is_correct': is_correct})
+                                    if answer_form.is_valid():
+                                        answer = answer_form.save(commit=False)
+                                        answer.question = question
+                                        answer.save()
+                                        answer_count += 1  # Increment answer count
+                                answer_index += 1
+
+                            # Check if at least two answers were added for this question
+                            if answer_count < 2:
+                                messages.error(request, "Each question must have at least two answers.")
+                                return render(request, 'Coordinator/add_question.html', {'quiz': quiz, 'question_form': question_form})
+
                     question_index += 1
+
+                # Check if at least one question was added
+                if question_count < 1:
+                    messages.error(request, "You must add at least one question.")
+                    return render(request, 'Coordinator/add_question.html', {'quiz': quiz, 'question_form': question_form})
+
+                messages.success(request, "Questions and answers added successfully.")
                 return redirect('Coordinator:quiz_detail', quiz_id=quiz.id)
         except Exception as e:
             messages.error(request, f"Error adding questions and answers: {str(e)}")
     else:
+        # Initialize an empty form for rendering
         question_form = QuestionForm()
 
     return render(request, 'Coordinator/add_question.html', {'quiz': quiz, 'question_form': question_form})
@@ -499,18 +432,7 @@ def upload_document(request, session_id):
 # def index(request):
 #     return render(request, 'frontend/build/index.html')
 
-from django.views.generic import TemplateView
-from django.template.exceptions import TemplateDoesNotExist
 
-# Serve React App
-# class ReactAppView(TemplateView):
-#     template_name = "index.html"
-
-#     def get(self, request, *args, **kwargs):
-#         try:
-#             return render(request, self.template_name)
-#         except TemplateDoesNotExist:
-#             return HttpResponse("React build not found. Check the build folder location.", status=501)
 
 class ReactAppView(TemplateView):
     template_name = "index.html"
@@ -523,54 +445,8 @@ class ReactAppView(TemplateView):
                 return HttpResponse(file.read())
         except FileNotFoundError:
             return HttpResponse("React build not found. Check the build folder location.", status=501)
-# from django.views.decorators.csrf import csrf_exempt
-# import uuid
-
-# @csrf_exempt
-# def get_session_id(request):
-#     # Generate or fetch a session ID
-#     session_id = str(uuid.uuid4())  # You can use UUID or any other method to generate the session ID
-#     return JsonResponse({'sessionId': session_id})
-  # Assuming a model for session data
-import uuid
-
-# def get_session_id(request):
-#     # Check for a session ID in the cookies
-#     session_id = request.COOKIES.get('sessionId')
-
-#     if not session_id:
-#         # If no session ID in cookies, check for an existing session in the DB
-#         # Example: Match the user or context with an existing session
-#         user = request.user if request.user.is_authenticated else None
-#         existing_session = Session.objects.filter(host=user).first() if user else None
-
-#         if existing_session:
-#             session_id = str(existing_session.id)
-#         else:
-#             # If no session is found, return an error
-#             return JsonResponse({'error': 'No session found for this user or context'}, status=404)
-
-#     # If a session is found, return it
-#     response = JsonResponse({'sessionId': session_id})
-#     response.set_cookie('sessionId', session_id)
-#     return response
 
 
-# def get_session_id(request):
-#     if request.user.is_authenticated:
-#         try:
-#             # Retrieve the session where the user is the host
-#             session = Session.objects.get(host=request.user)
-#             return JsonResponse({
-#                 'sessionId': str(session.id),
-#                 'name': session.name,
-#                 'date': session.date,
-#                 'documentUrl': session.document.url if session.document else None,  # Add more fields if needed
-#             })
-#         except Session.DoesNotExist:
-#             return JsonResponse({'error': 'No session found for this user'}, status=404)
-#     else:
-#         return JsonResponse({'error': 'User not authenticated'}, status=401)
 
 @login_required
 def get_session_id(request):
@@ -603,16 +479,6 @@ def get_session_id(request):
     }
 
     return JsonResponse(session_data)
-# def session_data(request, session_id):
-#     session = Session.objects.filter(id=session_id).first()
-#     if not session:
-#         raise Http404("No Session matches the given query.")
-    
-#     data = {
-#         'documentUrl': session.document.url if session.document else '',
-#         'sessionId': str(session.id),
-#     }
-#     return JsonResponse(data)
 
 def session_data(request, session_id):
     try:

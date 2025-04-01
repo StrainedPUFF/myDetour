@@ -9,7 +9,6 @@ import django.db.models.deletion
 # Create your models here.
 
 
-
 # Extend User model if needed
 class CustomUser(AbstractUser):
     groups = models.ManyToManyField(
@@ -49,42 +48,6 @@ class Role(models.Model):
     name = models.CharField(max_length=50, choices=ROLE_CHOICES, unique=True)
 
     def __str__(self):
-        return self.name
+        return self.name.capitalize()
 
 
-# Create a db for Quizzes 
-# class Quiz(models.Model):
-#     title = models.CharField(max_length = 255)
-#     date = models.DateTimeField(auto_now_add = True)
-    
-#     def __str__(self):
-#         return self.title
-# Add questions which will be linked to specific quizzes
-# class Question(models.Model):
-#     quiz = models.ForeignKey(Quiz, related_name='questions', on_delete=models.CASCADE)
-#     text = models.CharField(max_length=255)
-
-#     def __str__(self):
-#         return self.text
-# # Add answers to the questions
-# class Answer(models.Model):
-#     question = models.ForeignKey(Question, related_name='answers', on_delete=models.CASCADE)
-#     text = models.CharField(max_length=255)
-#     is_correct = models.BooleanField(default=False)
-
-#     def __str__(self):
-#         return self.text
-    
-
-
-
-# class QuizRecord(models.Model):
-#     # quiz = models.ForeignKey(Quiz, related_name='quiz_records', on_delete=models.CASCADE)
-#     quiz = models.ForeignKey(Quiz, related_name='quiz_records', on_delete=models.CASCADE, default=1)
-#     name = models.CharField(max_length=255)
-#     score = models.IntegerField()
-#     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='quiz_records', on_delete=models.CASCADE)
-#     date = models.DateTimeField(auto_now_add=True)
-
-#     def __str__(self):
-#         return f"{self.name} - {self.score}"

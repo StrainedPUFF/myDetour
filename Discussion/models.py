@@ -30,39 +30,102 @@ class SessionManager(models.Manager):
         return self.filter(
             date__gte=timezone.now()  # Sessions in the future
         ).exclude(
-            users_joined=user  # Exclude sessions the current user has already joined
-        ).distinct()  # Ensure results are unique
+            users_joined=user  # Exclude only sessions the user has already joined
+        ).order_by('date')  # Optional: Sort by the session date
 
+
+# class Session(models.Model):
+#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+#     name = models.CharField(max_length=100)
+#     date = models.DateTimeField(default=now)  # Automatically uses a timezone-aware datetime
+#     description = models.TextField(blank=True, null=True)
+#     host = models.ForeignKey(User, default=1, on_delete=models.CASCADE, related_name='hosted_main_sessions')
+#     users_joined = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='joined_sessions')
+#     users_accessed_react = models.ManyToManyField(User, related_name = 'sessions_accessed_react', blank='True')  
+#     quiz = models.OneToOneField('Quiz', on_delete=models.CASCADE, null=True, blank=True)
+#     document = models.FileField(upload_to=session_document_path, null=True, blank=True)
+#     objects = SessionManager()
+#     def clean(self):
+#         # Ensure the session date is not in the past
+#         if self.date < now():
+#             raise ValidationError("The session date cannot be in the past.")
+
+#     def __str__(self):
+#         return f"Session: {self.name} (Host: {self.host})"
+#     def has_expired(self):
+#         expiration_time = self.date + timedelta(hours=3)
+#         return timezone.now() > expiration_time
 
 class Session(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
-    date = models.DateTimeField(default=now)  # Automatically uses a timezone-aware datetime
+    date = models.DateTimeField(default=now)
     description = models.TextField(blank=True, null=True)
-    host = models.ForeignKey(User, default=1, on_delete=models.CASCADE, related_name='hosted_main_sessions')
-    users_joined = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='joined_sessions')
-    users_accessed_react = models.ManyToManyField(User, related_name = 'sessions_accessed_react', blank='True')  
-    quiz = models.OneToOneField('Quiz', on_delete=models.CASCADE, null=True, blank=True)
+    host = models.ForeignKey(
+        User,
+        default=1,
+        on_delete=models.CASCADE,
+        related_name='hosted_main_sessions'
+    )
+    users_joined = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='joined_sessions'
+    )
+    users_accessed_react = models.ManyToManyField(
+        User,
+        related_name='sessions_accessed_react',
+        blank=True
+    )
+    # The related_name here must also not clash with Quiz
+    quiz = models.OneToOneField(
+        'Quiz',
+        on_delete=models.CASCADE,
+        related_name='session_quiz',
+        null=True,
+        blank=True
+    )
     document = models.FileField(upload_to=session_document_path, null=True, blank=True)
     objects = SessionManager()
+
     def clean(self):
-        # Ensure the session date is not in the past
         if self.date < now():
             raise ValidationError("The session date cannot be in the past.")
 
     def __str__(self):
         return f"Session: {self.name} (Host: {self.host})"
+
     def has_expired(self):
         expiration_time = self.date + timedelta(hours=3)
         return timezone.now() > expiration_time
-    
-    
+
 class Quiz(models.Model):
-    title = models.CharField(max_length = 255)
-    date = models.DateTimeField(auto_now_add = True)
-    
+    title = models.CharField(max_length=255, unique=True)  # Enforcing unique titles
+    session = models.OneToOneField(
+        'Session',
+        on_delete=models.CASCADE,
+        related_name='quiz_session',
+        null=True,  # Allow the session to be assigned later
+        blank=True  # Ensure forms do not require it immediately
+    )
+    date = models.DateTimeField(auto_now_add=True)
+
+    def clean(self):
+        # Ensure the quiz title is not blank or whitespace
+        if not self.title.strip():
+            raise ValidationError("Quiz title cannot be blank or contain only whitespace.")
+        
+        # Validate that the associated session is in the future
+        if self.session and self.session.date < now():
+            raise ValidationError("Cannot assign a quiz to a session that is in the past.")
+
+    def save(self, *args, **kwargs):
+        # Perform validation during the save process
+        self.clean()
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return self.title
+        return f"{self.title} (Session: {self.session})" if self.session else self.title
+
     
 class Question(models.Model):
     quiz = models.ForeignKey(Quiz, default=1, related_name='questions', on_delete=models.CASCADE)
@@ -95,209 +158,7 @@ class QuizRecord(models.Model):
     def __str__(self):
         return f"{self.name} - {self.score}"
 
-
-
-
-# class InteractiveSession(models.Model):
-#     session = models.OneToOneField(Session, default=0, on_delete=models.CASCADE, related_name='interactive_session')
-#     # title = models.CharField(max_length=255, blank=True)
-#     description = models.TextField()
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
-#     host = models.ForeignKey(User, default=1, related_name='hosted_interactive_sessions', on_delete=models.CASCADE)
-#     is_active = models.BooleanField(default=True)
-#     video_conference_link = models.URLField(blank=True, null=True)
-#     whiteboard_link = models.URLField(blank=True, null=True)
-    
-
-#     def save(self, *args, **kwargs):
-#         # # Set the title to the session's name
-#         # if self.session and not self.title:
-#         #     self.title = self.session.name
-#         if not self.video_conference_link:
-#             self.video_conference_link = self.create_zoom_meeting_link()
-#         if not self.whiteboard_link:
-#             self.whiteboard_link = self.create_zoom_whiteboard_link()
-#         super().save(*args, **kwargs)
-#     def __str__(self):
-#         return f"{self.session.name} - Interactive Session"
-#     # Existing methods remain unchanged...
-
-
-#     def get_zoom_access_token(self, user):
-#         zoom_token = ZoomToken.objects.filter(user=user).first()
-#         if zoom_token and zoom_token.expires_at > timezone.now():
-#             print(f"Zoom token found for user {user}: {zoom_token.access_token}")
-#             return zoom_token.access_token
-#         else:
-#             print(f"No valid zoom token found for user {user}. Refreshing token...")
-#         return self.refresh_zoom_access_token(user)
-
-
-#     def refresh_zoom_access_token(self, user):
-#         zoom_token = ZoomToken.objects.filter(user=user).first()
-#         if not zoom_token:
-#             print("No zoom token found for user.")
-#             return None
-
-#         refresh_token = zoom_token.refresh_token
-#         client_id = settings.ZOOM_CLIENT_ID
-#         client_secret = settings.ZOOM_CLIENT_SECRET
-#         token_url = "https://zoom.us/oauth/token"
-
-#         data = {
-#             "grant_type": "refresh_token",
-#             "refresh_token": refresh_token
-#         }
-
-#         headers = {
-#             "Authorization": f"Basic {base64.b64encode(f'{client_id}:{client_secret}'.encode()).decode()}"
-#         }
-
-#         response = requests.post(token_url, data=data, headers=headers)
-#         access_token_info = response.json()
-
-#         if 'access_token' not in access_token_info:
-#             print(f"Failed to refresh access token. Response: {access_token_info}")
-#             return None
-#         print("Successfully refreshed access token.")
-#         # Additional debugging to ensure tokens are updated properly
-#         print(f"New access token: {new_access_token}")
-#         print(f"New refresh token: {new_refresh_token}")   
-#         new_access_token = access_token_info.get('access_token')
-#         new_refresh_token = access_token_info.get('refresh_token')
-#         expires_in = access_token_info.get('expires_in')
-#         expires_at = timezone.now() + timedelta(seconds=expires_in)
-
-#         zoom_token.access_token = new_access_token
-#         zoom_token.refresh_token = new_refresh_token
-#         zoom_token.expires_at = expires_at
-#         zoom_token.save()
-
-#         return new_access_token
- 
-
-#     def create_zoom_meeting_link(self):
-#         access_token = self.get_zoom_access_token(self.host)
-#         if not access_token:
-#             print("No access token found.")
-#             return ''
-
-#         conn = http.client.HTTPSConnection("api.zoom.us")
-#         headers = {
-#             'Authorization': f"Bearer {access_token}",
-#             'Content-Type': 'application/json'
-#         }
-
-#         # Fetch the user ID
-#         conn.request("GET", "/v2/users/me", headers=headers)
-#         res = conn.getresponse()
-#         if res.status != 200:
-#             print(f"Failed to fetch user ID. Status: {res.status}")
-#             error_data = res.read()
-#             print(f"Error Response: {error_data.decode('utf-8')}")
-#             return ''
-    
-#         user_data = res.read()
-#         user_info = json.loads(user_data.decode("utf-8"))
-#         user_id = user_info.get('id')
-
-#         if not user_id:
-#             print("User ID not found in response.")
-#             return ''
-
-#         body = json.dumps({
-#             "topic": "Interactive Session",
-#             "type": 1,  # Instant meeting
-#             "settings": {
-#                 "meeting_authentication": False
-#             }
-#         })
-
-#         conn.request("POST", f"/v2/users/{user_id}/meetings", body, headers)
-#         res = conn.getresponse()
-#         data = res.read()
-#         response_data = json.loads(data.decode("utf-8"))
-
-#         if res.status != 201:
-#             print(f"Failed to create Zoom meeting. Status: {res.status}, Response: {response_data}")
-#             return ''
-
-#         print(f"Zoom meeting created successfully. Response: {response_data}")
-#         return response_data.get('join_url', '')
-
-
-
-#     def create_zoom_whiteboard_link(self):
-#         access_token = self.get_zoom_access_token(self.host)
-#         if not access_token:
-#             print("No access token found.")
-#             return ''
-
-#         conn = http.client.HTTPSConnection("api.zoom.us")
-#         headers = {
-#             'Authorization': f"Bearer {access_token}",
-#             'Content-Type': 'application/json'
-#         }
-
-#         body = json.dumps({
-#             "name": "New Whiteboard Session"
-#         })
-
-#         print(f"Sending request to Zoom to create whiteboard: {body}")
-#         conn.request("POST", "/v2/whiteboards", body, headers)
-#         res = conn.getresponse()
-#         data = res.read()
-#         response_data = json.loads(data.decode("utf-8"))
-
-#         # Debugging: log the full response
-#         print(f"Zoom whiteboard response: {response_data}")
-
-#         if res.status != 201:
-#             print(f"Failed to create Zoom whiteboard. Status: {res.status}, Response: {response_data}")
-#             return ''
-
-#         print(f"Successfully created Zoom whiteboard. Response: {response_data}")
-#         whiteboard_id = response_data.get('whiteboard_id', '')
-
-#         if whiteboard_id:
-#             # Construct the whiteboard link using the whiteboard ID
-#             whiteboard_link = f"https://zoom.us/wb/{whiteboard_id}"
-#             return whiteboard_link
-#         else:
-#             print("Failed to get whiteboard link.")
-#             return ''
-
-
-# class ZoomToken(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='zoom_token')
-#     access_token = models.TextField()
-#     refresh_token = models.TextField()
-#     expires_at = models.DateTimeField()  # Store the expiry time of the access token
-
-#     def __str__(self):
-#         return f"{self.user.username}'s Zoom Token"
-
-
-
-
-        
-# class Poll(models.Model):
-#     session = models.ForeignKey(InteractiveSession, on_delete=models.CASCADE, related_name='polls')
-#     question_text = models.CharField(max_length=200)
-#     pub_date = models.DateTimeField('date published')
-#     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_polls')
-
-#     def __str__(self):
-#         return self.question_text
-
-# class Choice(models.Model):
-#     poll = models.ForeignKey(Poll, on_delete=models.CASCADE, related_name='choices')
-#     choice_text = models.CharField(max_length=200)
-#     votes = models.IntegerField(default=0)
-
-#     def __str__(self):
-#         return self.choice_text
+  
 
 class UserRoleInSession(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

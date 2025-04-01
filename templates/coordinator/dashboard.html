@@ -5,65 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Virtual Learning Collaboration System</title>
     {% load static %}
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static '.styles.css' %}">
     <style>
-        /* General Styles */
         body {
             font-family: 'Roboto', sans-serif;
             background: linear-gradient(135deg, #ff9d9d, #ffc4a3);
+            /* background: url("{% static 'images/login.webp' %}"); */
             margin: 0;
             padding: 0;
             color: #333;
         }
-
-        /* Navigation Bar */
-        .nav-bar {
-            background-color: #ff6363;
-            color: white;
-            border-bottom: 5px solid #ffab00;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .nav-bar h1 {
-            margin: 0;
-            font-size: 2.4em;
-            font-weight: bold;
-        }
-
-        .nav-bar a {
-            text-decoration: none;
-            color: white;
-            padding: 8px 15px;
-            background-color: #d9534f;
-            border-radius: 20px;
-            font-size: 1em;
-            transition: background-color 0.3s ease;
-        }
-
-        .nav-bar a:hover {
-            background-color: #c9302c;
-        }
-
-        /* Header */
         .header {
             background-color: #ff6363;
-            color: white;
-            text-align: center;
+            color: #ffffff;
             padding: 20px 0;
+            text-align: center;
             border-bottom: 5px solid #ffab00;
         }
-
         .header h1 {
+            margin: 0;
             font-size: 2.8em;
             font-weight: bold;
-            margin: 0;
         }
-
-        /* Container */
         .container {
             max-width: 1200px;
             margin: 20px auto;
@@ -71,25 +34,21 @@
             background-color: #ffffff;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
             border-radius: 12px;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
         .container:hover {
             transform: scale(1.02);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
-
-        /* Section Styles */
         .section h2 {
             margin-bottom: 15px;
             font-size: 1.8em;
             color: #ff6363;
         }
-
         .list-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
             padding: 15px;
             margin: 10px 0;
             background-color: #f9f9f9;
@@ -97,43 +56,35 @@
             border-radius: 8px;
             transition: background-color 0.3s, transform 0.2s;
         }
-
         .list-item:hover {
             background-color: #ffe0e0;
             transform: scale(1.02);
         }
-
         .list-item p {
             margin: 0;
             font-size: 1.2em;
             flex: 1;
         }
-
-        /* Button Styles */
         .button {
             background-color: #5cb85c;
             color: white;
-            padding: 10px 15px;
             border: none;
+            padding: 10px 15px;
             border-radius: 8px;
             font-size: 1em;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            transition: background-color 0.3s, transform 0.2s;
         }
-
         .button:hover {
             background-color: #4cae4c;
             transform: scale(1.05);
         }
-
         .button.cancel {
             background-color: #d9534f;
         }
-
         .button.cancel:hover {
             background-color: #c9302c;
         }
-
         .footer {
             text-align: center;
             padding: 20px 0;
@@ -141,15 +92,47 @@
             color: white;
             border-top: 5px solid #ffab00;
         }
+        input[type="checkbox"], textarea, input[type="datetime-local"] {
+            margin-top: 8px;
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            font-size: 1em;
+        }
     </style>
-</head>
-<body>
-    <!-- Enhanced Nav Bar -->
-    <nav class="nav-bar">
-        <h1>Dashboard</h1>
-        <a href="{% url 'Coordinator:logout' %}">Logout</a>
-    </nav>
+    <script>
+        function toggleInteractiveSessionFields() {
+            var checkBox = document.getElementById('id_create_interactive');
+            var interactiveFields = document.getElementById('interactive-session-fields');
+            if (checkBox.checked) {
+                interactiveFields.style.display = 'block';
+            } else {
+                interactiveFields.style.display = 'none';
+            }
+        }
 
+        document.addEventListener("DOMContentLoaded", function() {
+            var checkBox = document.getElementById('id_create_interactive');
+            checkBox.addEventListener('change', toggleInteractiveSessionFields);
+            toggleInteractiveSessionFields(); // Ensure correct initial state
+        });
+    </script>
+</head>
+<div class="nav">
+    <a href="{%url 'Coordinator:logout' %}">Logout</a>
+</div>
+<body>
+    <div class="header">
+        <h1>Dashboard</h1>
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
     <div class="container">
         <div class="section">
             <h2>Create Session</h2>
@@ -159,10 +142,17 @@
                 <div>
                     {{ form.name.label_tag }}
                     {{ form.name }}
+                    {% if form.name.errors %}
+                        <div class="error">{{ form.name.errors }}</div> <!-- Display field-specific errors -->
+                    {% endif %}
                 </div>
                 <div>
                     {{ form.date.label_tag }}
                     {{ form.date }}
+                </div>
+                <div>
+                    {{ form.create_interactive.label_tag }}
+                    {{ form.create_interactive }}
                 </div>
                 <div>
                     {{ form.description.label_tag }}
@@ -174,20 +164,55 @@
 
         <div class="section">
             <h2>Joined Sessions</h2>
-            <p>No joined sessions yet.</p>
+            {% if joined_sessions %}
+                {% for session in joined_sessions %}
+                    <div class="list-item">
+                        <p>{{ session.name }}: {{ session.date }}</p>
+                        <form method="POST" action="{% url 'Coordinator:cancel_booking' session.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="button cancel">Cancel Booking</button>
+                        </form>
+                        <form method="POST" action="{% url 'Coordinator:join_session' session.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="button join_session">Join Session</button>
+                        </form>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No joined sessions yet.</p>
+            {% endif %}
         </div>
 
         <div class="section">
             <h2>Upcoming Sessions</h2>
-            <p>No upcoming sessions yet.</p>
+            {% if upcoming_sessions %}
+                {% for session in upcoming_sessions %}
+                    <div class="list-item">
+                        <p>{{ session.name }}: {{ session.date }}</p>
+                        <form method="POST" action="{% url 'Coordinator:book_session' session.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="button">Book Session</button>
+                        </form>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No upcoming sessions yet.</p>
+            {% endif %}
         </div>
 
         <div class="section">
             <h2>Quiz Records</h2>
-            <p>No quizzes attempted yet.</p>
+            {% if quiz_records %}
+                {% for quiz in quiz_records %}
+                    <div class="list-item">
+                        <p>{{ quiz.name }}:<br> Score {{ quiz.score }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No quizzes attempted yet.</p>
+            {% endif %}
         </div>
     </div>
-
     <div class="footer">
         <p>&copy; 2025 Virtual Learning Collaboration System. All rights reserved.</p>
     </div>
