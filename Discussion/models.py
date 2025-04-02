@@ -25,16 +25,21 @@ def session_document_path(instance, filename):
     # Define the upload path using the session ID and original filename
     return os.path.join(f'sessions/{instance.id}/documents/', filename)
 
+# class SessionManager(models.Manager):
+#     def get_upcoming_for_user(self, user):
+#         return self.filter(
+#             date__gte=timezone.now()  # Sessions in the future
+#         ).exclude(
+#             users_joined=user  # Exclude only sessions the user has already joined
+#         ).order_by('date')  # Optional: Sort by the session date
+
 class SessionManager(models.Manager):
     def get_upcoming_for_user(self, user):
         return self.filter(
             date__gte=timezone.now()  # Sessions in the future
         ).exclude(
-            users_joined=user  # Exclude only sessions the user has already joined
-        ).order_by('date')  # Optional: Sort by the session date
-
-
-
+            users_joined__id=user.id,  # Exclude sessions joined by the current user
+        ).distinct().order_by('date')  # Ensure no duplicates and sort by date
 class Session(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, unique=True)
@@ -76,6 +81,11 @@ class Session(models.Model):
     def has_expired(self):
         expiration_time = self.date + timedelta(hours=3)
         return timezone.now() > expiration_time
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['date']),
+        ]
 
 class Quiz(models.Model):
     title = models.CharField(max_length=255, unique=True)  # Enforcing unique titles

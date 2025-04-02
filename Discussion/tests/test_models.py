@@ -77,36 +77,37 @@ class UserRoleInSessionTestCase(TestCase):
         self.assertEqual(self.user_role.role.name, Role.MODERATOR)
 class SessionManagerTestCase(TestCase):
     def setUp(self):
-        # Create a unique user
+        # Create users
         self.user = User.objects.create_user(username=f"testuser_{uuid.uuid4()}", password="password")
+        self.another_user = User.objects.create_user(username=f"anotheruser_{uuid.uuid4()}", password="password")
 
         # Create upcoming sessions
         self.session1 = Session.objects.create(
             name=f"Session 1 {uuid.uuid4()}",
             date=now() + timedelta(days=1),  # Tomorrow
-            host=self.user
+            host=self.user  # Hosted by the test user
         )
         self.session2 = Session.objects.create(
             name=f"Session 2 {uuid.uuid4()}",
             date=now() + timedelta(days=2),  # Day after tomorrow
-            host=self.user
+            host=self.another_user  # Hosted by another user
         )
         # Create a past session
         self.past_session = Session.objects.create(
             name=f"Past Session {uuid.uuid4()}",
             date=now() - timedelta(days=1),  # Yesterday
-            host=self.user
+            host=self.user  # Hosted by the test user
         )
 
         # Simulate the user joining the first session
-        self.session1.users_joined.add(self.user) 
+        self.session1.users_joined.add(self.user)
 
     def test_get_upcoming_for_user(self):
         # Get upcoming sessions for the user
         upcoming_sessions = Session.objects.get_upcoming_for_user(self.user)
         
         # Verify the upcoming sessions are correctly returned
-        self.assertIn(self.session2, upcoming_sessions)  # Should include session2
-        self.assertNotIn(self.session1, upcoming_sessions)  # Should exclude session1 (already joined)
-        self.assertNotIn(self.past_session, upcoming_sessions)  # Should exclude past sessions
-        self.assertTrue(upcoming_sessions.exists())  # Ensure we have upcoming session
+        self.assertIn(self.session2, upcoming_sessions, f"Expected session2 but it wasn't found.")  # Should include session2
+        self.assertNotIn(self.session1, upcoming_sessions, f"Session1 is already joined; it shouldn't appear.")  # Exclude session1 (already joined)
+        self.assertNotIn(self.past_session, upcoming_sessions, f"Past sessions should not appear.")  # Exclude past sessions
+        self.assertTrue(upcoming_sessions.exists(), "Upcoming sessions should include at least one session.")
