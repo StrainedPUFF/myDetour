@@ -34,31 +34,10 @@ class SessionManager(models.Manager):
         ).order_by('date')  # Optional: Sort by the session date
 
 
-# class Session(models.Model):
-#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-#     name = models.CharField(max_length=100)
-#     date = models.DateTimeField(default=now)  # Automatically uses a timezone-aware datetime
-#     description = models.TextField(blank=True, null=True)
-#     host = models.ForeignKey(User, default=1, on_delete=models.CASCADE, related_name='hosted_main_sessions')
-#     users_joined = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='joined_sessions')
-#     users_accessed_react = models.ManyToManyField(User, related_name = 'sessions_accessed_react', blank='True')  
-#     quiz = models.OneToOneField('Quiz', on_delete=models.CASCADE, null=True, blank=True)
-#     document = models.FileField(upload_to=session_document_path, null=True, blank=True)
-#     objects = SessionManager()
-#     def clean(self):
-#         # Ensure the session date is not in the past
-#         if self.date < now():
-#             raise ValidationError("The session date cannot be in the past.")
-
-#     def __str__(self):
-#         return f"Session: {self.name} (Host: {self.host})"
-#     def has_expired(self):
-#         expiration_time = self.date + timedelta(hours=3)
-#         return timezone.now() > expiration_time
 
 class Session(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     date = models.DateTimeField(default=now)
     description = models.TextField(blank=True, null=True)
     host = models.ForeignKey(

@@ -70,18 +70,25 @@ def profile_view(request):
     return render(request, 'coordinator/userprofile.html', {'user': user})
 
 
+
+
 def create_quiz_for_session(session, quiz_data):
     try:
-        # Ensure the session is fully saved
-        session.refresh_from_db()  # Reload session from the database to ensure it is finalized
+        session.refresh_from_db()  # Reload session from the database
+
+    # Check if the title should have a unique identifier
+        unique_title = quiz_data.get('title')
+        if 'append_session_id' in quiz_data and quiz_data['append_session_id']:
+            unique_title = f"{unique_title} ({session.id})"
+        quiz_data['title'] = unique_title
 
         quiz_form = QuizForm(quiz_data)
         if quiz_form.is_valid():
             quiz = quiz_form.save(commit=False)
-            quiz.session = session  # Explicitly associate quiz with the session
-            quiz.save()  # Save the quiz to generate its ID
+            quiz.session = session  # Associate the quiz with the session
+            quiz.save()
             session.quiz = quiz  # Link the quiz back to the session
-            session.save()  # Save the session with the quiz association
+            session.save()
             return True, quiz
         else:
             return False, quiz_form.errors
@@ -96,29 +103,34 @@ def dashboard_view(request):
     joined_sessions = user.joined_sessions.filter(date__gte=timezone.now() - timedelta(hours=3)).distinct()
     upcoming_sessions = Session.objects.get_upcoming_for_user(user)
     quiz_records = user.quiz_records.all()
-
+    print(upcoming_sessions.query)
     if request.method == 'POST':
         form = SessionForm(request.POST)
         if form.is_valid():
             try:
-                with transaction.atomic():
-                    # Create and save session
-                    new_session = form.save(commit=False)
-                    new_session.host = user
-                    new_session.save()
-                    new_session.users_joined.add(user)
+                # Check for duplicate session name
+                session_name = form.cleaned_data['name']
+                if Session.objects.filter(name=session_name).exists():
+                    messages.error(request, f"A session with the name '{session_name}' already exists. Please choose a different name.")
+                else:
+                    with transaction.atomic():
+                        # Create and save session
+                        new_session = form.save(commit=False)
+                        new_session.host = user
+                        new_session.save()
+                        new_session.users_joined.add(user)
 
-                    # Delegate quiz creation
-                    quiz_data = request.POST.copy()
-                    quiz_data['title'] = new_session.name  # Ensure title matches the QuizForm field
-                    success, result = create_quiz_for_session(new_session, quiz_data)
+                        # Delegate quiz creation
+                        quiz_data = request.POST.copy()
+                        quiz_data['title'] = new_session.name  # Ensure title matches the QuizForm field
+                        success, result = create_quiz_for_session(new_session, quiz_data)
 
-                    if success:
-                        # Redirect to the document upload page
-                        messages.success(request, f"Session '{new_session.name}' created and joined successfully!")
-                        return redirect('Coordinator:upload_document', session_id=new_session.id)
-                    else:
-                        messages.error(request, f"Quiz creation failed: {result}")
+                        if success:
+                            # Redirect to the document upload page
+                            messages.success(request, f"Session '{new_session.name}' created and joined successfully!")
+                            return redirect('Coordinator:upload_document', session_id=new_session.id)
+                        else:
+                            messages.error(request, f"Quiz creation failed: {result}")
             except Exception as e:
                 messages.error(request, f"Error creating session: {e}")
         else:
@@ -126,7 +138,6 @@ def dashboard_view(request):
             messages.error(request, "Session form is not valid. Please correct the errors.")
     else:
         form = SessionForm()
-
     # Render the dashboard
     return render(request, 'Coordinator/dashboard.html', {
         'user': user,

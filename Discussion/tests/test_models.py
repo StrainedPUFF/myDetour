@@ -5,7 +5,8 @@ from Coordinator.models import Role
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import timedelta
-
+from django.utils.timezone import now
+import uuid
 class SessionTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="testuser", password="testpass")
@@ -74,3 +75,38 @@ class UserRoleInSessionTestCase(TestCase):
         self.assertEqual(self.user_role.user, self.user)
         self.assertEqual(self.user_role.session, self.session)
         self.assertEqual(self.user_role.role.name, Role.MODERATOR)
+class SessionManagerTestCase(TestCase):
+    def setUp(self):
+        # Create a unique user
+        self.user = User.objects.create_user(username=f"testuser_{uuid.uuid4()}", password="password")
+
+        # Create upcoming sessions
+        self.session1 = Session.objects.create(
+            name=f"Session 1 {uuid.uuid4()}",
+            date=now() + timedelta(days=1),  # Tomorrow
+            host=self.user
+        )
+        self.session2 = Session.objects.create(
+            name=f"Session 2 {uuid.uuid4()}",
+            date=now() + timedelta(days=2),  # Day after tomorrow
+            host=self.user
+        )
+        # Create a past session
+        self.past_session = Session.objects.create(
+            name=f"Past Session {uuid.uuid4()}",
+            date=now() - timedelta(days=1),  # Yesterday
+            host=self.user
+        )
+
+        # Simulate the user joining the first session
+        self.session1.users_joined.add(self.user) 
+
+    def test_get_upcoming_for_user(self):
+        # Get upcoming sessions for the user
+        upcoming_sessions = Session.objects.get_upcoming_for_user(self.user)
+        
+        # Verify the upcoming sessions are correctly returned
+        self.assertIn(self.session2, upcoming_sessions)  # Should include session2
+        self.assertNotIn(self.session1, upcoming_sessions)  # Should exclude session1 (already joined)
+        self.assertNotIn(self.past_session, upcoming_sessions)  # Should exclude past sessions
+        self.assertTrue(upcoming_sessions.exists())  # Ensure we have upcoming session
