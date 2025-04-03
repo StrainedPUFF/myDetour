@@ -258,7 +258,7 @@
             {% if quiz_records %}
                 {% for quiz in quiz_records %}
                     <div class="list-item">
-                        <p>{{ quiz.name }}:<br> Score {{ quiz.score }}</p>
+                        <p>{{ quiz.name }}:<br> Quiz: {{ quiz.quiz }}:<br> Score {{ quiz.score }}</p>
                     </div>
                 {% endfor %}
             {% else %}

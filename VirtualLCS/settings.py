@@ -122,6 +122,7 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = 'Coordinator.CustomUser'
 
 
 # Password validation
@@ -186,3 +187,5 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
+LOGIN_URL = '/Coordinator/login/'  # Your custom login page
+LOGIN_REDIRECT_URL = '/Coordinator/dashboard/'  # Redirect after successful login

@@ -1,7 +1,14 @@
 from django import forms
-from Discussion.models import Session
+from .models import CustomUser
 from django.core.exceptions import ValidationError
-from Discussion.models import Question, Answer, Quiz
+from Discussion.models import Question, Answer, Quiz, Session
+from django.contrib.auth.forms import UserCreationForm
+
+
+class CustomUserCreationForm(UserCreationForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'password1', 'password2']
 
 class QuizForm(forms.ModelForm):
     class Meta:

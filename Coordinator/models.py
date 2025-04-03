@@ -10,7 +10,23 @@ import django.db.models.deletion
 
 
 # Extend User model if needed
+# class CustomUser(AbstractUser):
+#     groups = models.ManyToManyField(
+#         'auth.Group',
+#         related_name='customuser_set',
+#         blank=True,
+#         help_text='The groups this user belongs to.',
+#         verbose_name='groups',
+#     )
+#     user_permissions = models.ManyToManyField(
+#         'auth.Permission',
+#         related_name='customuser_set',
+#         blank=True,
+#         help_text='Specific permissions for this user.',
+#         verbose_name='user permissions',
+#     )
 class CustomUser(AbstractUser):
+    email = models.EmailField(unique=True)  # Ensure email is included and unique
     groups = models.ManyToManyField(
         'auth.Group',
         related_name='customuser_set',
@@ -28,7 +44,7 @@ class CustomUser(AbstractUser):
 
 # Profile model
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     bio = models.TextField(blank=True)
     profile_image = models.ImageField(upload_to='profile_images', blank=True)
 

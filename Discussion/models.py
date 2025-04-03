@@ -46,7 +46,7 @@ class Session(models.Model):
     date = models.DateTimeField(default=now)
     description = models.TextField(blank=True, null=True)
     host = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         default=1,
         on_delete=models.CASCADE,
         related_name='hosted_main_sessions'
@@ -56,7 +56,7 @@ class Session(models.Model):
         related_name='joined_sessions'
     )
     users_accessed_react = models.ManyToManyField(
-        User,
+        settings.AUTH_USER_MODEL,
         related_name='sessions_accessed_react',
         blank=True
     )
@@ -112,8 +112,11 @@ class Quiz(models.Model):
         self.clean()
         super().save(*args, **kwargs)
 
+    # def __str__(self):
+        # return f"{self.title} (Session: {self.session})" if self.session else self.title
     def __str__(self):
-        return f"{self.title} (Session: {self.session})" if self.session else self.title
+        return f"{self.title} (Host: {self.session.host})" if self.session and self.session.host else self.title
+
 
     
 class Question(models.Model):
@@ -145,12 +148,12 @@ class QuizRecord(models.Model):
         unique_together = ('quiz', 'user')  # Add unique constraint to prevent duplicate records
 
     def __str__(self):
-        return f"{self.name} - {self.score}"
+        return f"{self.name} - {self.score} - {self.quiz.title}"
 
   
 
 class UserRoleInSession(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     session = models.ForeignKey(Session, default=1, on_delete=models.CASCADE)
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
     assigned_at = models.DateTimeField(auto_now_add=True)

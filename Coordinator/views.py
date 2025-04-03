@@ -20,6 +20,7 @@ from django.http import JsonResponse, Http404
 from django.utils.timezone import now
 from django.urls import reverse
 from django.views.generic import TemplateView
+from .forms import CustomUserCreationForm
 import uuid
 import os
 
@@ -29,19 +30,34 @@ def homepage_to_signup(request):
 def homepage_to_login(request):
     return render(request, 'Coordinator/login.html')
 
+# def signup_view(request):
+#     if request.method == 'POST':
+#         form = UserCreationForm(request.POST)
+#         if form.is_valid():
+#             user = form.save()
+#             login(request, user)
+#             return redirect('Coordinator:dashboard')  # Redirect to a home page or any other page
+#         else:
+#             errors = form.errors
+#     else:
+#         form = UserCreationForm()
+#         errors = None
+#     return render(request, 'coordinator/signup.html', {'form': form, 'errors': errors})
+
 def signup_view(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)  # Use your CustomUserCreationForm
         if form.is_valid():
             user = form.save()
-            login(request, user)
-            return redirect('Coordinator:dashboard')  # Redirect to a home page or any other page
+            login(request, user)  # Log in the user after successful signup
+            return redirect('Coordinator:dashboard')  # Redirect to the dashboard or any desired page
         else:
             errors = form.errors
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
         errors = None
     return render(request, 'coordinator/signup.html', {'form': form, 'errors': errors})
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -102,7 +118,8 @@ def dashboard_view(request):
     user = request.user
     joined_sessions = user.joined_sessions.filter(date__gte=timezone.now() - timedelta(hours=3)).distinct()
     upcoming_sessions = Session.objects.get_upcoming_for_user(user)
-    quiz_records = user.quiz_records.all()
+    # quiz_records = user.quiz_records.all()
+    quiz_records = user.quiz_records.all().order_by('-date')[:5]  # Fetch the last five quiz records based on date
     print(upcoming_sessions.query)
     if request.method == 'POST':
         form = SessionForm(request.POST)
@@ -200,28 +217,28 @@ def home_session_view(request):
     print("Sessions fetched:", sessions)  # Add this line
     return render(request, 'Coordinator/home.html', {'sessions': sessions})
 
-@login_required
-def add_question(request, quiz_id):
-    quiz = get_object_or_404(Quiz, id=quiz_id)
-    if request.method == 'POST':
-        question_form = QuestionForm(request.POST)
-        answer_form = AnswerForm(request.POST)
-        if question_form.is_valid() and answer_form.is_valid():
-            question = question_form.save(commit=False)
-            question.quiz = quiz
-            question.save()
-            answer = answer_form.save(commit=False)
-            answer.question = question
-            answer.save()
-            return redirect('quiz_detail', quiz_id=quiz.id)
-    else:
-        question_form = QuestionForm()
-        answer_form = AnswerForm()
-    return render(request, 'Coordinator/add_question.html', {
-        'quiz': quiz,
-        'question_form': question_form,
-        'answer_form': answer_form
-    })
+# @login_required
+# def add_question(request, quiz_id):
+#     quiz = get_object_or_404(Quiz, id=quiz_id)
+#     if request.method == 'POST':
+#         question_form = QuestionForm(request.POST)
+#         answer_form = AnswerForm(request.POST)
+#         if question_form.is_valid() and answer_form.is_valid():
+#             question = question_form.save(commit=False)
+#             question.quiz = quiz
+#             question.save()
+#             answer = answer_form.save(commit=False)
+#             answer.question = question
+#             answer.save()
+#             return redirect('quiz_detail', quiz_id=quiz.id)
+#     else:
+#         question_form = QuestionForm()
+#         answer_form = AnswerForm()
+#     return render(request, 'Coordinator/add_question.html', {
+#         'quiz': quiz,
+#         'question_form': question_form,
+#         'answer_form': answer_form
+#     })
 
 
 
