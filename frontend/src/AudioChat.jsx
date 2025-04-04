@@ -7,6 +7,8 @@ const AudioChat = () => {
   const audioRef = useRef(null);
   const socket = useRef(null);
   const [isMuted, setIsMuted] = useState(false);
+  const [muteOutgoing, setMuteOutgoing] = useState(false);
+  const audioContextRef = useRef(null); // Create audioContextRef with useRef
 
   // Utility to convert PCM data to WAV format
   const createWAV = (pcmData) => {
@@ -35,46 +37,41 @@ const AudioChat = () => {
     dataView.setUint32(36, 0x64617461); // "data"
     dataView.setUint32(40, dataSize, true); // PCM data size
 
-    // Combine header and body
     return new Blob([wavHeader, new Uint16Array(wavBody.map(x => x * 32767))], { type: 'audio/wav' });
   };
 
-  // Wrap playAudio in useCallback
   const playAudio = useCallback((pcmData) => {
     try {
-      // Convert the received audio data object to a Float32Array
       const floatArray = new Float32Array(Object.values(pcmData));
-
-      // Convert PCM to WAV format
       const wavBlob = createWAV(floatArray);
 
-      const audioContext = new AudioContext();
+      if (!audioContextRef.current) {
+        audioContextRef.current = new AudioContext();
+      }
 
-      // Ensure the AudioContext is running
-      if (audioContext.state === 'suspended') {
-        audioContext.resume();
+      if (audioContextRef.current.state === 'suspended') {
+        audioContextRef.current.resume();
       }
 
       const reader = new FileReader();
       reader.onload = () => {
         const arrayBuffer = reader.result;
 
-        // Decode and play the WAV data
-        audioContext.decodeAudioData(arrayBuffer).then((decodedData) => {
-          const source = audioContext.createBufferSource();
+        audioContextRef.current.decodeAudioData(arrayBuffer).then((decodedData) => {
+          const source = audioContextRef.current.createBufferSource();
           source.buffer = decodedData;
-          source.connect(audioContext.destination);
+          source.connect(audioContextRef.current.destination);
           source.start();
         }).catch((error) => {
           console.error("Error decoding audio data:", error);
         });
       };
 
-      reader.readAsArrayBuffer(wavBlob); // Read the WAV Blob as ArrayBuffer
+      reader.readAsArrayBuffer(wavBlob);
     } catch (error) {
       console.error("Error playing audio:", error.message);
     }
-  }, []); // Add dependencies if needed
+  }, []);
 
   const connectWebSocket = useCallback(() => {
     if (!sessionId) {
@@ -82,7 +79,6 @@ const AudioChat = () => {
       return;
     }
 
-    // Initialize WebSocket connection
     socket.current = new WebSocket(`ws://127.0.0.1:8080/ws/session/${sessionId}/`);
 
     socket.current.onopen = () => {
@@ -94,7 +90,7 @@ const AudioChat = () => {
 
       if (data.type === 'audio') {
         console.log('Audio data received:', data.payload);
-        playAudio(data.payload); // Play received audio
+        playAudio(data.payload);
       }
     };
 
@@ -105,42 +101,40 @@ const AudioChat = () => {
     socket.current.onerror = (error) => {
       console.error('WebSocket error:', error.message);
     };
-  }, [sessionId, playAudio]); // Include playAudio in dependencies
+  }, [sessionId, playAudio]);
 
   useEffect(() => {
     connectWebSocket();
-
     return () => {
       socket.current?.close();
     };
   }, [connectWebSocket]);
 
-  // Function to capture and send audio data
   const startAudioCapture = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); // Corrected method name
-  
-      // Attach the captured audio stream to the audioRef element
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       audioRef.current.srcObject = stream;
-  
-      const audioContext = new AudioContext();
-  
-      // Load the audio processor
-      await audioContext.audioWorklet.addModule('audio-processor.js');
-      const audioProcessor = new AudioWorkletNode(audioContext, 'audio-processor');
-  
-      const input = audioContext.createMediaStreamSource(stream);
+
+      if (!audioContextRef.current) {
+        audioContextRef.current = new AudioContext();
+      }
+
+      await audioContextRef.current.audioWorklet.addModule('audio-processor.js');
+      const audioProcessor = new AudioWorkletNode(audioContextRef.current, 'audio-processor');
+
+      const input = audioContextRef.current.createMediaStreamSource(stream);
       input.connect(audioProcessor);
-      audioProcessor.connect(audioContext.destination);
-  
-      // Send audio data to the WebSocket
+      audioProcessor.connect(audioContextRef.current.destination);
+
       audioProcessor.port.onmessage = (event) => {
         const audioChunk = event.data;
-        if (socket.current) {
-          socket.current.send(JSON.stringify({
-            type: 'audio',
-            payload: audioChunk,
-          }));
+        if (socket.current && !muteOutgoing) { // Check muteOutgoing state
+          socket.current.send(
+            JSON.stringify({
+              type: 'audio',
+              payload: audioChunk,
+            })
+          );
         }
       };
     } catch (error) {
@@ -151,10 +145,28 @@ const AudioChat = () => {
   const toggleMute = () => {
     if (audioRef.current?.srcObject) {
       const audioTracks = audioRef.current.srcObject.getAudioTracks();
-      audioTracks.forEach((track) => (track.enabled = !isMuted));
+  
+      if (isMuted) {
+        // Unmute: Re-enable audio tracks
+        audioTracks.forEach((track) => (track.enabled = true));
+  
+        // Resume audio context if suspended
+        if (audioContextRef.state === 'suspended') {
+          audioContextRef.resume();
+        }
+      } else {
+        // Mute: Disable audio tracks
+        audioTracks.forEach((track) => (track.enabled = false));
+  
+        // Suspend audio context
+        if (audioContextRef.state === 'running') {
+          audioContextRef.suspend();
+        }
+      }
+  
       setIsMuted(!isMuted);
     }
-  };
+  };  
 
   return (
     <div>

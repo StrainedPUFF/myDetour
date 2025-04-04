@@ -6,17 +6,8 @@ from django.utils import timezone
 from django.shortcuts import redirect
 from datetime import timedelta
 from django.core.exceptions import ValidationError
-from googleapiclient.discovery import build
-from google.oauth2.credentials import Credentials
-from django.shortcuts import render, HttpResponse
-from google.auth.exceptions import RefreshError
 import logging
 logger = logging.getLogger(__name__)
-import time
-import base64
-import requests
-import http.client
-import json
 import uuid
 import os
 from django.utils.timezone import now
