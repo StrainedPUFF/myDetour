@@ -114,7 +114,7 @@ WSGI_APPLICATION = 'VirtualLCS.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'my_database',
+        'NAME': 'my_detour',
         'USER': 'postgres',
         'PASSWORD': 'k4%u6"6v5-EJ',
         'HOST': 'localhost',

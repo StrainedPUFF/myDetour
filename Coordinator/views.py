@@ -217,34 +217,13 @@ def home_session_view(request):
     print("Sessions fetched:", sessions)  # Add this line
     return render(request, 'Coordinator/home.html', {'sessions': sessions})
 
-# @login_required
-# def add_question(request, quiz_id):
-#     quiz = get_object_or_404(Quiz, id=quiz_id)
-#     if request.method == 'POST':
-#         question_form = QuestionForm(request.POST)
-#         answer_form = AnswerForm(request.POST)
-#         if question_form.is_valid() and answer_form.is_valid():
-#             question = question_form.save(commit=False)
-#             question.quiz = quiz
-#             question.save()
-#             answer = answer_form.save(commit=False)
-#             answer.question = question
-#             answer.save()
-#             return redirect('quiz_detail', quiz_id=quiz.id)
-#     else:
-#         question_form = QuestionForm()
-#         answer_form = AnswerForm()
-#     return render(request, 'Coordinator/add_question.html', {
-#         'quiz': quiz,
-#         'question_form': question_form,
-#         'answer_form': answer_form
-#     })
 
 
 
 
 
 @login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def attempt_quiz(request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
     session = get_object_or_404(Session, id=quiz.session.id)  # Get the session associated with the quiz
@@ -287,6 +266,7 @@ def attempt_once(request):
     return render(request, 'coordinator/attempt_once.html')
 
 @login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def submit_quiz(request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
 
@@ -320,7 +300,7 @@ def calculate_score(quiz, selected_answers):
         if selected_answer.is_correct:
             score += 1
     return score
-
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def quiz_result(request, quiz_record_id):
     quiz_record = get_object_or_404(QuizRecord, id=quiz_record_id)
     return render(request, 'coordinator/quiz_result.html', {'score': quiz_record.score})
@@ -362,6 +342,7 @@ def join_session(request, session_id):
 
 
 @login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def add_question_and_answers(request, quiz_id):
     quiz = get_object_or_404(Quiz, pk=quiz_id)
     question_form = QuestionForm()  # Initialize the form here
@@ -429,7 +410,7 @@ def quiz_detail(request, quiz_id):
     return render(request, 'Coordinator/quiz_detail.html', {'quiz': quiz, 'questions': questions})
 
 
-
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def upload_document(request, session_id):
     session = get_object_or_404(Session, id=session_id)
 
