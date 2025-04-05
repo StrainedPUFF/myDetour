@@ -59,6 +59,15 @@
             transform: scale(1.05);
         }
     </style>
+    <script>
+        // Prevent the back button
+        window.onload = function () {
+            history.pushState(null, null, location.href); 
+            window.onpopstate = function () {
+                history.go(1); 
+            };
+        };
+    </script>
 </head>
 <body>
     <div class="container">

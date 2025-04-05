@@ -70,6 +70,13 @@
             background-color: #0056b3;
         }
     </style>
+    <script>
+        // Prevent the back button
+        history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+            history.go(1); // Forces the user to stay on the current page
+        };
+    </script>
 </head>
 <body>
     <div class="container">

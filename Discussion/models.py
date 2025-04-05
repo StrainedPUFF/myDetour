@@ -27,7 +27,7 @@ def session_document_path(instance, filename):
 class SessionManager(models.Manager):
     def get_upcoming_for_user(self, user):
         return self.filter(
-            date__gte=timezone.now() - timedelta(minutes=15) # Sessions in the future
+            date__gte=timezone.now() - timedelta(minutes=30) # Sessions in the future
         ).exclude(
             users_joined__id=user.id,  # Exclude sessions joined by the current user
         ).distinct().order_by('date')  # Ensure no duplicates and sort by date

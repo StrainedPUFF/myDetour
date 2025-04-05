@@ -77,6 +77,11 @@
             background-color: #3e8e41; /* Deeper green */
             transform: scale(1.05);
         }
+        history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+            history.go(1); // Forces the user to stay on the current page
+        };
+
     </style>
 </head>
 <body>

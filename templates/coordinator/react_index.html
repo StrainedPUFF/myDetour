@@ -15,6 +15,11 @@
         console.log('Document is fully loaded');
         console.log('Root element check:', document.getElementById('root'));
     });
+    // Prevent the back button
+    history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+            history.go(1); // Forces the user to stay on the current page
+        };
 </script>
 <script src="/static/frontend/main.js"></script>
     {% render_bundle 'main' %}    

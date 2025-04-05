@@ -170,6 +170,12 @@
             checkBox.addEventListener('change', toggleInteractiveSessionFields);
             toggleInteractiveSessionFields(); // Ensure correct initial state
         });
+        // prevent the back button
+        history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+            history.go(1); // Forces the user to stay on the current page
+        };
+
     </script>
 </head>
 <div class="nav">
@@ -179,12 +185,11 @@
     <div class="header">
         <h1>Dashboard</h1>
         {% if messages %}
-        <ul>
             {% for message in messages %}
-                <li>{{ message }}</li>
+                <p class="message {{ message.tags }}">{{ message }}</p>
             {% endfor %}
-        </ul>
         {% endif %}
+
     </div>
     <div class="container">
         <div class="section">
