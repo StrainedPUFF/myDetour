@@ -28,6 +28,7 @@ urlpatterns = [
     path('Discussion/', include('Discussion.urls')),            # Move to its own subpath
     path('admin/', admin.site.urls),
     path('api/get-session-id/', views.get_session_id, name='get-session-id'),
+    path('attempt-quiz/<int:quiz_id>/react/', views.ReactAppView.as_view(), name='attempt_quiz_react'),  # Optional new pattern
     path('attempt-quiz/<int:quiz_id>/', views.attempt_quiz, name='attempt_quiz'),
     path('api/session-data/<str:session_id>/', views.session_data, name='session_data'),
     path('react/', views.ReactAppView.as_view(), name='react-app'),  # React app specific

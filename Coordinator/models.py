@@ -9,22 +9,7 @@ import django.db.models.deletion
 # Create your models here.
 
 
-# Extend User model if needed
-# class CustomUser(AbstractUser):
-#     groups = models.ManyToManyField(
-#         'auth.Group',
-#         related_name='customuser_set',
-#         blank=True,
-#         help_text='The groups this user belongs to.',
-#         verbose_name='groups',
-#     )
-#     user_permissions = models.ManyToManyField(
-#         'auth.Permission',
-#         related_name='customuser_set',
-#         blank=True,
-#         help_text='Specific permissions for this user.',
-#         verbose_name='user permissions',
-#     )
+
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)  # Ensure email is included and unique
     groups = models.ManyToManyField(

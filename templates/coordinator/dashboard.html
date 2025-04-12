@@ -155,26 +155,6 @@
     }
     </style>
     <script>
-        function toggleInteractiveSessionFields() {
-            var checkBox = document.getElementById('id_create_interactive');
-            var interactiveFields = document.getElementById('interactive-session-fields');
-            if (checkBox.checked) {
-                interactiveFields.style.display = 'block';
-            } else {
-                interactiveFields.style.display = 'none';
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            var checkBox = document.getElementById('id_create_interactive');
-            checkBox.addEventListener('change', toggleInteractiveSessionFields);
-            toggleInteractiveSessionFields(); // Ensure correct initial state
-        });
-        // prevent the back button
-        history.pushState(null, null, location.href);
-        window.onpopstate = function () {
-            history.go(1); // Forces the user to stay on the current page
-        };
 
     </script>
 </head>

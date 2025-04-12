@@ -309,11 +309,7 @@ def cancel_session(request, session_id):
         return redirect('Coordinator:dashboard')
     return render(request, 'coordinator/dashboard.html', {'session': session})
 
-# def home_session_view(request):
-#     print("View is being executed")  # Add this line
-#     sessions = Session.objects.filter(date__gte=timezone.now())
-#     print("Sessions fetched:", sessions)  # Add this line
-#     return render(request, 'Coordinator/home.html', {'sessions': sessions})
+
 
 @login_required
 def join_session(request, session_id):
@@ -345,13 +341,17 @@ def join_session(request, session_id):
 
 
 class ReactAppView(TemplateView):
+     
     template_name = "index.html"
 
     def get(self, request, *args, **kwargs):
+        
         try:
+    
             # Locate the `index.html` in the React build directory
             build_dir = os.path.join(os.path.dirname(__file__), '..', 'frontend/build/')
             with open(os.path.join(build_dir, self.template_name)) as file:
+                request.session['progress'] = 'session_attended'
                 return HttpResponse(file.read())
         except FileNotFoundError:
             return HttpResponse("React build not found. Check the build folder location.", status=501)
@@ -361,6 +361,9 @@ class ReactAppView(TemplateView):
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def attempt_quiz(request, quiz_id):
+    if request.session.get('progress') != 'session_attended':
+        messages.error(request, "Please join the session before attempting the quiz.")
+        return redirect('react/')
     quiz = get_object_or_404(Quiz, id=quiz_id)
     session = get_object_or_404(Session, id=quiz.session.id)  # Get the session associated with the quiz
 
@@ -417,7 +420,7 @@ def submit_quiz(request, quiz_id):
             )
         except Exception as e:
             print(f"Error saving quiz record: {e}")
-
+        request.session['progress'] = 'quiz_submitted'
         return redirect('Coordinator:quiz_result', quiz_record_id=quiz_record.id)
 
     return redirect('Coordinator:attempt_quiz', quiz_id=quiz.id)

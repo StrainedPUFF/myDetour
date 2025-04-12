@@ -8,7 +8,3 @@ class CustomUserAdmin(UserAdmin):
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register( Profile)
 admin.site.register( Role)
-# admin.site.register( Quiz)
-# admin.site.register( Question)
-# admin.site.register( Answer)
-# admin.site.register( QuizRecord)

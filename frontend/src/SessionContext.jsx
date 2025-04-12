@@ -18,6 +18,7 @@ export const SessionProvider = ({ children }) => {
     setLoading(false); // Set loading to false once data is received
   };
 
+
   const handleError = (error) => {
     setError(error);
     setLoading(false); // Set loading to false on error

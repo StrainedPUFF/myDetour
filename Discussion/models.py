@@ -16,13 +16,7 @@ def session_document_path(instance, filename):
     # Define the upload path using the session ID and original filename
     return os.path.join(f'sessions/{instance.id}/documents/', filename)
 
-# class SessionManager(models.Manager):
-#     def get_upcoming_for_user(self, user):
-#         return self.filter(
-#             date__gte=timezone.now()  # Sessions in the future
-#         ).exclude(
-#             users_joined=user  # Exclude only sessions the user has already joined
-#         ).order_by('date')  # Optional: Sort by the session date
+
 
 class SessionManager(models.Manager):
     def get_upcoming_for_user(self, user):
