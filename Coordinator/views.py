@@ -133,7 +133,7 @@ def dashboard_view(request):
             pass  # Iterate through messages to mark them as read
 
     # Render the dashboard
-    return render(request, 'Coordinator/dashboard.html', {
+    return render(request, 'coordinator/dashboard.html', {
         'user': user,
         'joined_sessions': joined_sessions,
         'upcoming_sessions': upcoming_sessions,
