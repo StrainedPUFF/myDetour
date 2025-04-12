@@ -26,6 +26,7 @@ import os
 urlpatterns = [
     path('Coordinator/', include('Coordinator.urls')),
     path('Discussion/', include('Discussion.urls')),            # Move to its own subpath
+    path('home_view/', views.home_view, name='home_view'),
     path('admin/', admin.site.urls),
     path('api/get-session-id/', views.get_session_id, name='get-session-id'),
     path('attempt-quiz/<int:quiz_id>/react/', views.ReactAppView.as_view(), name='attempt_quiz_react'),  # Optional new pattern
