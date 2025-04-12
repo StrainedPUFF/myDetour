@@ -378,9 +378,9 @@ env/
 db.sqlite3
 secrets.json
 
-# Static files
-/static/
-/media/
+# # Static files
+# /static/
+# /media/
 
 # Django migrations
 *.log
@@ -415,7 +415,6 @@ pytestdebug.log
 # Build and distribution directories
 *.egg-info/
 dist/
-build/
 
 # Node.js dependencies (React)
 /node_modules
@@ -425,8 +424,6 @@ build/
 # Testing
 /coverage
 
-# Production
-/build
 
 # Misc
 .env.local
