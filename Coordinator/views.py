@@ -170,7 +170,7 @@ def upload_document(request, session_id):
     session = get_object_or_404(Session, id=session_id)
     if request.session.get('progress') != 'session_created':
         messages.error(request, "Please follow the session creation process.")
-        return redirect('Coordinator:dashboard')
+        return redirect('coordinator:dashboard')
 
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
@@ -179,7 +179,7 @@ def upload_document(request, session_id):
             session.save()
             request.session['progress'] = 'document_uploaded'  # Update progress marker
             messages.success(request, "Document uploaded successfully!")
-            return redirect('Coordinator:add_question_and_answers', quiz_id=session.quiz.id)
+            return redirect('coordinator:add_question_and_answers', quiz_id=session.quiz.id)
         else:
             messages.error(request, "Invalid file upload. Please try again.")
     else:
@@ -194,7 +194,7 @@ def add_question_and_answers(request, quiz_id):
     # Validate progress
     if request.session.get('progress') != 'document_uploaded':
         messages.error(request, "You need to upload a document before adding questions.")
-        return redirect('Coordinator:upload_document', session_id=quiz.session.id)
+        return redirect('coordinator:upload_document', session_id=quiz.session.id)
     question_form = QuestionForm()  # Initialize the form here
 
     if request.method == 'POST':
@@ -234,31 +234,31 @@ def add_question_and_answers(request, quiz_id):
                             # Check if at least two answers were added for this question
                             if answer_count < 2:
                                 messages.error(request, "Each question must have at least two answers.")
-                                return render(request, 'Coordinator/add_question.html', {'quiz': quiz, 'question_form': question_form})
+                                return render(request, 'coordinator/add_question.html', {'quiz': quiz, 'question_form': question_form})
 
                     question_index += 1
 
                 # Check if at least one question was added
                 if question_count < 1:
                     messages.error(request, "You must add at least one question.")
-                    return render(request, 'Coordinator/add_question.html', {'quiz': quiz, 'question_form': question_form})
+                    return render(request, 'coordinator/add_question.html', {'quiz': quiz, 'question_form': question_form})
 
                 messages.success(request, "Questions and answers added successfully.")
                 request.session['progress'] = 'questions_added'  # Update progress marker
-                return redirect('Coordinator:quiz_detail', quiz_id=quiz.id)
+                return redirect('coordinator:quiz_detail', quiz_id=quiz.id)
         except Exception as e:
             messages.error(request, f"Error adding questions and answers: {str(e)}")
     else:
         # Initialize an empty form for rendering
         question_form = QuestionForm()
-    return render(request, 'Coordinator/add_question.html', {'quiz': quiz, 'question_form': question_form})
+    return render(request, 'coordinator/add_question.html', {'quiz': quiz, 'question_form': question_form})
 
 
 @login_required
 def quiz_detail(request, quiz_id):
     quiz = get_object_or_404(Quiz, pk=quiz_id)
     questions = quiz.questions.all()
-    return render(request, 'Coordinator/quiz_detail.html', {'quiz': quiz, 'questions': questions})
+    return render(request, 'coordinator/quiz_detail.html', {'quiz': quiz, 'questions': questions})
 
 
 
