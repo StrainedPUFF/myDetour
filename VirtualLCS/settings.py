@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
 from pathlib import Path
+import dj_database_url
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,9 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-0q^uchiqzzzajkf@pn3(@o6!qh$9fi5m@$#=j(qbaoasir2#%h'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['mydetour.herokuapp.com','localhost', '127.0.0.1', '[::1]']
 
 
 # Application definition
@@ -46,13 +48,24 @@ INSTALLED_APPS = [
 
 ASGI_APPLICATION = 'VirtualLCS.asgi.application'
 
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             'hosts': [('127.0.0.1', 6379)],
+#             "capacity": 10000,  # Number of messages in the queue
+#             "expiry": 60,       # Message expiry time in seconds
+#         },
+#     },
+# }
+
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [('127.0.0.1', 6379)],
-            "capacity": 10000,  # Number of messages in the queue
-            "expiry": 60,       # Message expiry time in seconds
+            'hosts': [os.getenv('REDIS_URL')],
+            "capacity": 10000,
+            "expiry": 60,
         },
     },
 }
@@ -111,16 +124,22 @@ WSGI_APPLICATION = 'VirtualLCS.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'my_detour',
+#         'USER': 'postgres',
+#         'PASSWORD': 'k4%u6"6v5-EJ',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
+
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'my_detour',
-        'USER': 'postgres',
-        'PASSWORD': 'k4%u6"6v5-EJ',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
 }
+
 
 AUTH_USER_MODEL = 'Coordinator.CustomUser'
 
