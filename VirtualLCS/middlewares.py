@@ -6,5 +6,5 @@ class RootRedirectMiddleware:
 
     def __call__(self, request):
         if request.path == "/":  # Root URL
-            return HttpResponseRedirect('/django-home/')  # Redirect to Django's primary view
+            return HttpResponseRedirect('/home_view/')  # Redirect to Django's primary view
         return self.get_response(request)
