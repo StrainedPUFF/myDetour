@@ -210,3 +210,9 @@ INTERNAL_IPS = [
 
 LOGIN_URL = '/Coordinator/login/'  # Your custom login page
 LOGIN_REDIRECT_URL = '/Coordinator/dashboard/'  # Redirect after successful login
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+SECURE_SSL_REDIRECT = True  # Redirect all HTTP traffic to HTTPS
+SESSION_COOKIE_SECURE = True  # Use HTTPS for session cookies
+CSRF_COOKIE_SECURE = True  # Use HTTPS for CSRF cookies
