@@ -339,7 +339,7 @@ def join_session(request, session_id):
     # Default redirection to the dashboard
     return redirect('Coordinator:dashboard')
 
-@login_required
+
 class ReactAppView(TemplateView):
      
     template_name = "index.html"
