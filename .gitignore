@@ -21,8 +21,6 @@ Design diagrams/
 
 db.sqlite3
 
-settings.py
-asgi.py
 
 # dependencies
 /.pnp
@@ -400,7 +398,6 @@ secrets.json
 # OS-specific files
 .DS_Store
 .db_sqlite3
-.settings.py
 
 # Test coverage and reports
 .coverage
