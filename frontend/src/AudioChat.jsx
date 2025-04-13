@@ -79,7 +79,7 @@ const AudioChat = () => {
       return;
     }
 
-    socket.current = new WebSocket(`ws://127.0.0.1:8080/ws/session/${sessionId}/`);
+    socket.current = new WebSocket(`ws://mydetour-e22e7c03c4e8.herokuapp.com/ws/session/${sessionId}/`);
 
     socket.current.onopen = () => {
       console.log('WebSocket connection established');

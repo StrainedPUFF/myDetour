@@ -76,7 +76,7 @@ const DocumentCanvas = () => {
   useEffect(() => {
     if (!sessionId) return;
 
-    const webSocketUrl = `ws://127.0.0.1:8080/ws/session/${sessionId}/`;
+    const webSocketUrl = `ws://mydetour-e22e7c03c4e8.herokuapp.com/ws/session/${sessionId}/`;
 
     socket.current = new WebSocket(webSocketUrl);
 
