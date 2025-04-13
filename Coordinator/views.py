@@ -179,7 +179,7 @@ def upload_document(request, session_id):
             session.save()
             request.session['progress'] = 'document_uploaded'  # Update progress marker
             messages.success(request, "Document uploaded successfully!")
-            return redirect('coordinator:add_question_and_answers', quiz_id=session.quiz.id)
+            return redirect('Coordinator:add_question_and_answers', quiz_id=session.quiz.id)
         else:
             messages.error(request, "Invalid file upload. Please try again.")
     else:
