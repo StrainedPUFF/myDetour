@@ -170,7 +170,7 @@ def upload_document(request, session_id):
     session = get_object_or_404(Session, id=session_id)
     if request.session.get('progress') != 'session_created':
         messages.error(request, "Please follow the session creation process.")
-        return redirect('coordinator:dashboard')
+        return redirect('Coordinator:dashboard')
 
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
@@ -194,7 +194,7 @@ def add_question_and_answers(request, quiz_id):
     # Validate progress
     if request.session.get('progress') != 'document_uploaded':
         messages.error(request, "You need to upload a document before adding questions.")
-        return redirect('coordinator:upload_document', session_id=quiz.session.id)
+        return redirect('Coordinator:upload_document', session_id=quiz.session.id)
     question_form = QuestionForm()  # Initialize the form here
 
     if request.method == 'POST':
@@ -245,7 +245,7 @@ def add_question_and_answers(request, quiz_id):
 
                 messages.success(request, "Questions and answers added successfully.")
                 request.session['progress'] = 'questions_added'  # Update progress marker
-                return redirect('coordinator:quiz_detail', quiz_id=quiz.id)
+                return redirect('Coordinator:quiz_detail', quiz_id=quiz.id)
         except Exception as e:
             messages.error(request, f"Error adding questions and answers: {str(e)}")
     else:
@@ -339,7 +339,7 @@ def join_session(request, session_id):
     # Default redirection to the dashboard
     return redirect('Coordinator:dashboard')
 
-
+@login_required
 class ReactAppView(TemplateView):
      
     template_name = "index.html"
