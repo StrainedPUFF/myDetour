@@ -12,10 +12,14 @@ import uuid
 import os
 from django.utils.timezone import now
 
-def session_document_path(instance, filename):
+# def session_document_path(instance, filename):
     # Define the upload path using the session ID and original filename
     # return os.path.join(f'sessions/{instance.id}/documents/', filename)
-    return f'sessions/{instance.id}/documents/{filename}'
+    # return f'sessions/{instance.id}/documents/{filename}'
+def session_document_path(instance, filename):
+    path = f'sessions/{instance.id}/documents/{filename}'
+    print(f"Generated path: {path}")
+    return path
 
 
 
