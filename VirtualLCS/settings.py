@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 import dj_database_url
+from decouple import config
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -209,6 +210,6 @@ SESSION_COOKIE_SECURE = True  # Use HTTPS for session cookies
 CSRF_COOKIE_SECURE = True  # Use HTTPS for CSRF cookies
 
 DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage' 
-AZURE_ACCOUNT_NAME = os.getenv('AZURE_ACCOUNT_NAME')
-AZURE_ACCOUNT_KEY = os.getenv('AZURE_ACCOUNT_KEY')
+AZURE_ACCOUNT_NAME = config('AZURE_ACCOUNT_NAME')
+AZURE_ACCOUNT_KEY = config('AZURE_ACCOUNT_KEY')
 AZURE_CONTAINER = 'media'
