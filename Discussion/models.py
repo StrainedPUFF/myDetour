@@ -14,7 +14,8 @@ from django.utils.timezone import now
 
 def session_document_path(instance, filename):
     # Define the upload path using the session ID and original filename
-    return os.path.join(f'sessions/{instance.id}/documents/', filename)
+    # return os.path.join(f'sessions/{instance.id}/documents/', filename)
+    return f'sessions/{instance.id}/documents/{filename}'
 
 
 
