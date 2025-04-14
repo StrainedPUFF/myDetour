@@ -207,3 +207,8 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True  # Redirect all HTTP traffic to HTTPS
 SESSION_COOKIE_SECURE = True  # Use HTTPS for session cookies
 CSRF_COOKIE_SECURE = True  # Use HTTPS for CSRF cookies
+
+DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage' 
+AZURE_ACCOUNT_NAME = os.getenv('AZURE_ACCOUNT_NAME')
+AZURE_ACCOUNT_KEY = os.getenv('AZURE_ACCOUNT_KEY')
+AZURE_CONTAINER = 'media'
