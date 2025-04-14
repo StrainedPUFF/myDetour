@@ -65,6 +65,12 @@ class Session(models.Model):
     def clean(self):
         if self.date < now():
             raise ValidationError("The session date cannot be in the past.")
+        
+    def save(self, *args, **kwargs):
+        # Ensure instance ID is generated before saving the file
+        if not self.id:
+            super().save(*args, **kwargs)  # First save to generate the ID
+        super().save(*args, **kwargs)  # Save again to handle the file path correctly
 
     def __str__(self):
         return f"Session: {self.name} (Host: {self.host})"
