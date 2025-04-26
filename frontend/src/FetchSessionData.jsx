@@ -19,7 +19,10 @@ const FetchSessionData = ({ onSessionData }) => {
       try {
         console.log('Fetching session data...');
         
-        const response = await fetch('https://mydetour-e22e7c03c4e8.herokuapp.com/api/get-session-id/', {
+        // const response = await fetch('https://mydetour-e22e7c03c4e8.herokuapp.com/api/get-session-id/', {
+        //   credentials: 'include', // Include authentication credentials
+        // });
+        const response = await fetch('http://127.0.0.1:8000/api/get-session-id/', {
           credentials: 'include', // Include authentication credentials
         });
 

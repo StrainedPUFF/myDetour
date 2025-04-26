@@ -43,7 +43,8 @@ const SessionPage = () => {
         </section>
       </main>
       <footer className="session-footer">
-        <a className="quiz-button" href={`https://mydetour-e22e7c03c4e8.herokuapp.com/attempt-quiz/${quiz_id}/`}>Go to Quiz</a>
+        {/* <a className="quiz-button" href={`https://mydetour-e22e7c03c4e8.herokuapp.com/attempt-quiz/${quiz_id}/`}>Go to Quiz</a> */}
+        <a className="quiz-button" href={`http://127.0.0.1:8000/attempt-quiz/${quiz_id}/`}>Go to Quiz</a>
       </footer>
     </div>
   );

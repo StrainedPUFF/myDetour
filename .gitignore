@@ -431,3 +431,7 @@ dist/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+testmail.py
+data.json
+debug.py

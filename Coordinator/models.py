@@ -12,6 +12,8 @@ import django.db.models.deletion
 
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)  # Ensure email is included and unique
+    USERNAME_FIELD = 'username'  # Ensure login happens via username
+    REQUIRED_FIELDS = ['email']  # Keep email required but secondary
     groups = models.ManyToManyField(
         'auth.Group',
         related_name='customuser_set',

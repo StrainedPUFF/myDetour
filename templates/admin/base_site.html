@@ -1,0 +1,64 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>myDetour Admin</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/base.css' %}">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: "Arial", sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            margin: auto;
+            text-align: center;
+            padding: 20px;
+        }
+        .branding h1 {
+            color: #00ffc8;
+            font-size: 28px;
+            font-weight: bold;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .user-links {
+            padding: 15px;
+            background-color: #0077ff;
+            display: inline-block;
+            border-radius: 8px;
+        }
+        .user-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 10px 20px;
+            display: inline-block;
+        }
+        .user-links a:hover {
+            background-color: #005bb5;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% block branding %}
+        <div class="branding">
+            <h1>myDetour Admin Panel</h1>
+        </div>
+        {% endblock %}
+
+        {% block userlinks %}
+        <div class="user-links">
+            <a href="{% url 'Coordinator:login' %}">Back to Home</a> |
+            <a href="{% url 'custom_logout' %}">Logout</a>
+        </div>
+        {% endblock %}
+    </div>
+</body>
+</html>

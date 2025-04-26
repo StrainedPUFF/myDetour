@@ -1,0 +1,33 @@
+{% extends "admin/base_site.html" %}
+
+<html lang="en">
+<head>
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+        .dashboard-container {
+            width: 80%;
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #0077ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1>Welcome to myDetour Admin Dashboard</h1>
+        <p>Here’s your quick-access panel.</p>
+        {% block content %}
+            {{ block.super }}  <!-- Keeps existing admin content -->
+        {% endblock %}
+    </div>
+</body>
+</html>

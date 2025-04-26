@@ -1,0 +1,44 @@
+{% extends "admin/base.html" %}
+
+<html lang="en">
+<head>
+    <title>Admin Logout</title>
+    <style>
+        body {
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+        .logout-container {
+            width: 40%;
+            margin: 100px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h2 {
+            color: #0077ff;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px;
+            background: #0077ff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        a:hover {
+            background: #005bb5;
+        }
+    </style>
+</head>
+<body>
+    <div class="logout-container">
+        <h2>Successfully Logged Out</h2>
+        <p>Thank you for using myDetour Admin.</p>
+        <a href="{% url 'admin:login' %}">Return to Login</a>
+    </div>
+</body>
+</html>

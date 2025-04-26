@@ -16,13 +16,24 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.contrib.auth import logout
+from django.shortcuts import redirect
 from Coordinator import views
+from django.contrib.auth import views as auth_views
 from debug_toolbar.toolbar import debug_toolbar_urls
 from django.conf import settings
 from django.conf.urls.static import static
 from .settings import BASE_DIR
 import os
 
+def custom_logout(request):
+    if request.user.is_staff:  # Checks if the user is an admin
+        logout(request)
+        return redirect('/admin/login/')  # Redirect to admin login page
+    else:
+        logout(request)
+        return redirect('/')  # Redirect other users to homepage
+    
 urlpatterns = [
     path('Coordinator/', include('Coordinator.urls')),
     path('Discussion/', include('Discussion.urls')),            # Move to its own subpath
@@ -33,7 +44,13 @@ urlpatterns = [
     path('attempt-quiz/<int:quiz_id>/', views.attempt_quiz, name='attempt_quiz'),
     path('api/session-data/<str:session_id>/', views.session_data, name='session_data'),
     path('react/', views.ReactAppView.as_view(), name='react-app'),  # React app specific
-    path('', views.ReactAppView.as_view(), name='react-root')        # Serve React for root
+    path('', views.ReactAppView.as_view(), name='react-root'),        # Serve React for root
+    path('reset_password/', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    path('reset_password_done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset_password_confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    path('admin/login/', auth_views.LoginView.as_view(template_name='admin/login.html'), name='admin_login'),
+    path('logout/', custom_logout, name='custom_logout'),
 ] + debug_toolbar_urls()
 
 

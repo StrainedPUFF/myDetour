@@ -12,12 +12,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0q^uchiqzzzajkf@pn3(@o6!qh$9fi5m@$#=j(qbaoasir2#%h'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['mydetour-e22e7c03c4e8.herokuapp.com','8460-105-163-2-135.ngrok-free.app','localhost', '127.0.0.1', '[::1]']
+ALLOWED_HOSTS = ['mydetour-e22e7c03c4e8.herokuapp.com','e05e-2c0f-fe38-2325-b1e3-edd8-8d40-19dd-f7eb.ngrok-free.app','localhost', '127.0.0.1', '[::1]']
 
 
 # Application definition
@@ -34,32 +34,32 @@ INSTALLED_APPS = [
     'channels',#to enable audio interaction in screenshares through handling web sockets
     'debug_toolbar',
     'webpack_loader', #integrate react with django
-    'sslserver',
+    # 'sslserver',
 ]
 
 ASGI_APPLICATION = 'VirtualLCS.asgi.application'
-
-# CHANNEL_LAYERS = {
-#     'default': {
-#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
-#         'CONFIG': {
-#             'hosts': [('127.0.0.1', 6379)],
-#             "capacity": 10000,  # Number of messages in the queue
-#             "expiry": 60,       # Message expiry time in seconds
-#         },
-#     },
-# }
 
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [os.getenv('REDIS_URL')],
-            "capacity": 10000,
-            "expiry": 60,
+            'hosts': [('127.0.0.1', 6379)],
+            "capacity": 10000,  # Number of messages in the queue
+            "expiry": 60,       # Message expiry time in seconds
         },
     },
 }
+
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             'hosts': [os.getenv('REDIS_URL')],
+#             "capacity": 10000,
+#             "expiry": 60,
+#         },
+#     },
+# }
 
 WEBPACK_LOADER = {
     'DEFAULT': {
@@ -117,21 +117,21 @@ WSGI_APPLICATION = 'VirtualLCS.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'my_detour',
-#         'USER': 'postgres',
-#         'PASSWORD': 'k4%u6"6v5-EJ',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
-# }
-
-
 DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('NAME'),
+        'USER': config('USER'),
+        'PASSWORD': config('PASSWORD'),
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
 }
+
+
+# DATABASES = {
+#     'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
+# }
 
 
 AUTH_USER_MODEL = 'Coordinator.CustomUser'
@@ -153,6 +153,10 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # Ensure it's using standard user authentication
 ]
 
 
@@ -200,16 +204,32 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
+TEMPLATES[0]['OPTIONS']['context_processors'].append('django.template.context_processors.request')
+
+# TEMPLATES[0]['DIRS'] = [BASE_DIR / "templates"]
+TEMPLATES[0]['DIRS'] = [os.path.join(BASE_DIR, "templates")]
+
+
+
 LOGIN_URL = '/Coordinator/login/'  # Your custom login page
 LOGIN_REDIRECT_URL = '/Coordinator/dashboard/'  # Redirect after successful login
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
 
-SECURE_SSL_REDIRECT = True  # Redirect all HTTP traffic to HTTPS
-SESSION_COOKIE_SECURE = True  # Use HTTPS for session cookies
-CSRF_COOKIE_SECURE = True  # Use HTTPS for CSRF cookies
 
-DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage' 
-AZURE_ACCOUNT_NAME = config('AZURE_ACCOUNT_NAME')
-AZURE_ACCOUNT_KEY = config('AZURE_ACCOUNT_KEY')
-AZURE_CONTAINER = 'media'
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# SECURE_SSL_REDIRECT = True  # Redirect all HTTP traffic to HTTPS
+# SESSION_COOKIE_SECURE = True  # Use HTTPS for session cookies
+# CSRF_COOKIE_SECURE = True  # Use HTTPS for CSRF cookies
+
+# DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage' 
+# AZURE_ACCOUNT_NAME = config('AZURE_ACCOUNT_NAME')
+# AZURE_ACCOUNT_KEY = config('AZURE_ACCOUNT_KEY')
+# AZURE_CONTAINER = 'media'
