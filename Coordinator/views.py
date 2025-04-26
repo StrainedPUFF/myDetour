@@ -27,6 +27,8 @@ from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages import get_messages
+from django.contrib.auth.views import PasswordResetConfirmView
+from .forms import CustomSetPasswordForm
 import uuid
 import os
 
@@ -503,3 +505,8 @@ def session_data(request, session_id):
 def logout_view(request):
     logout(request)
     return redirect('Coordinator:login')
+
+
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    form_class = CustomSetPasswordForm

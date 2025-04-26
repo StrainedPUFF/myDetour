@@ -3,7 +3,8 @@ from .models import CustomUser
 from django.core.exceptions import ValidationError
 from Discussion.models import Question, Answer, Quiz, Session
 from django.contrib.auth.forms import UserCreationForm
-
+from django import forms
+from django.contrib.auth.forms import SetPasswordForm
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
@@ -58,3 +59,14 @@ class DocumentForm(forms.Form):
             if document.content_type != 'application/pdf':
                 raise ValidationError("Uploaded file must be a valid PDF document.")
         return document
+    
+
+
+
+
+class CustomSetPasswordForm(SetPasswordForm):
+    def clean_new_password1(self):
+        password = self.cleaned_data.get("new_password1")
+        from django.contrib.auth.password_validation import validate_password
+        validate_password(password, self.user)  # Uses Django's built-in validators
+        return password
