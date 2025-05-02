@@ -119,6 +119,7 @@ class Quiz(models.Model):
 class Question(models.Model):
     quiz = models.ForeignKey(Quiz, default=1, related_name='questions', on_delete=models.CASCADE)
     text = models.CharField(max_length=255)
+    multiple_answers_allowed = models.BooleanField(default=False)  # New field
 
     def __str__(self):
         return self.text

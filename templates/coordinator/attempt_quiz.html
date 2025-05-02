@@ -39,6 +39,24 @@
             history.go(1); // Forces the user to stay on the current page
         };
 
+        document.addEventListener("DOMContentLoaded", function () {
+        document.querySelector(".submit-btn").addEventListener("click", function (event) {
+            let unanswered = false;
+
+            document.querySelectorAll(".question").forEach(function (questionDiv) {
+                const inputs = questionDiv.querySelectorAll("input[type='radio'], input[type='checkbox']");
+                if (![...inputs].some(input => input.checked)) {
+                    unanswered = true;
+                }
+            });
+
+            if (unanswered) {
+                event.preventDefault(); // Stop form submission
+                alert("Please answer all questions before submitting.");
+            }
+        });
+    });
+
     </script>
 </head>
 <body>
@@ -49,10 +67,18 @@
         {% for question in quiz.questions.all %}
             <div class="question">
                 <p>{{ question.text }}</p>
-                {% for answer in question.answers.all %}
-                    <input type="radio" id="answer_{{ answer.id }}" name="question_{{ question.id }}" value="{{ answer.id }}">
-                    <label for="answer_{{ answer.id }}">{{ answer.text }}</label><br>
-                {% endfor %}
+                
+                {% if question.multiple_answers_allowed %}
+                    {% for answer in question.answers.all %}
+                        <input type="checkbox" id="answer_{{ answer.id }}" name="question_{{ question.id }}" value="{{ answer.id }}">
+                        <label for="answer_{{ answer.id }}">{{ answer.text }}</label><br>
+                    {% endfor %}
+                {% else %}
+                    {% for answer in question.answers.all %}
+                        <input type="radio" id="answer_{{ answer.id }}" name="question_{{ question.id }}" value="{{ answer.id }}">
+                        <label for="answer_{{ answer.id }}">{{ answer.text }}</label><br>
+                    {% endfor %}
+                {% endif %}
             </div>
         {% endfor %}
         <button type="submit" class="submit-btn">Submit Quiz</button>

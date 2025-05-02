@@ -34,11 +34,11 @@ const SessionPage = () => {
       </header>
       <main className="session-content">
         <section className="document-section">
-          <h2>Document Viewer</h2>
+          {/* <h2>Document Viewer</h2> */}
           <DocumentCanvas />
         </section>
         <section className="audio-section">
-          <h2>Audio Chat</h2>
+          {/* <h2>Audio Chat</h2> */}
           <AudioChat sessionId={sessionId} />
         </section>
       </main>

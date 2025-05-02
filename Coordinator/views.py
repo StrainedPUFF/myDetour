@@ -1,10 +1,10 @@
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import  AuthenticationForm
 from django.contrib.auth import login
 from django.shortcuts import render, redirect
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
-from Discussion.models import Session,Quiz, Question, Answer,QuizRecord
+from Discussion.models import Session,Quiz, Answer,QuizRecord
 from django.utils import timezone
 from .forms import SessionForm
 from django.contrib import messages
@@ -13,7 +13,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import QuestionForm, AnswerForm, QuizForm
 from datetime import timedelta
 from django.http import HttpResponse, HttpResponseForbidden
-from django.http import HttpResponseRedirect
 from django.views.decorators.cache import cache_control
 from .forms import DocumentForm
 from django.http import JsonResponse, Http404
@@ -189,26 +188,30 @@ def upload_document(request, session_id):
 
     return render(request, 'coordinator/upload.html', {'form': form, 'session': session})
 
+
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def add_question_and_answers(request, quiz_id):
     quiz = get_object_or_404(Quiz, pk=quiz_id)
+
     # Validate progress
     if request.session.get('progress') != 'document_uploaded':
         messages.error(request, "You need to upload a document before adding questions.")
         return redirect('Coordinator:upload_document', session_id=quiz.session.id)
+
     question_form = QuestionForm()  # Initialize the form here
 
     if request.method == 'POST':
         print(request.POST)  # Debugging: Print POST data
+
         try:
             with transaction.atomic():
                 question_index = 0
                 question_count = 0
-                valid_answers_count = 0
 
                 while f'question_{question_index}_text' in request.POST:
                     question_text = request.POST.get(f'question_{question_index}_text')
+
                     if question_text.strip():  # Skip empty questions
                         question_form = QuestionForm(data={'text': question_text})
                         if question_form.is_valid():
@@ -219,11 +222,13 @@ def add_question_and_answers(request, quiz_id):
 
                             answer_index = 1  # Start answer index from 1
                             answer_count = 0  # Reset answer count for this question
+                            correct_answers_count = 0  # Track correct answers
+
                             while f'answer_{question_index}_{answer_index}_text' in request.POST:
                                 answer_text = request.POST.get(f'answer_{question_index}_{answer_index}_text')
                                 is_correct = request.POST.get(f'answer_{question_index}_{answer_index}_is_correct') == 'on'
-                                print(f"Creating answer for question {question_index}: {answer_text}, correct: {is_correct}")  # Debugging: Print answer data
-                                
+                                print(f"Creating answer for question {question_index}: {answer_text}, correct: {is_correct}")  # Debugging
+
                                 if answer_text.strip():  # Skip empty answers
                                     answer_form = AnswerForm(data={'text': answer_text, 'is_correct': is_correct})
                                     if answer_form.is_valid():
@@ -231,7 +236,22 @@ def add_question_and_answers(request, quiz_id):
                                         answer.question = question
                                         answer.save()
                                         answer_count += 1  # Increment answer count
+
+                                        # Track number of correct answers
+                                        if is_correct:
+                                            correct_answers_count += 1  
+
                                 answer_index += 1
+
+                            # Dynamically determine if multiple correct answers are allowed
+                            question.multiple_answers_allowed = correct_answers_count > 1
+                            question.save()
+                            print(f"Saved question '{question.text}' allows multiple answers: {question.multiple_answers_allowed}")
+
+                            # Ensure only one correct answer if multiple_answers_allowed is False
+                            if correct_answers_count > 1 and not question.multiple_answers_allowed:
+                                messages.error(request, f"Question '{question.text}' only allows one correct answer, but {correct_answers_count} were provided.")
+                                return render(request, 'coordinator/add_question.html', {'quiz': quiz, 'question_form': question_form})
 
                             # Check if at least two answers were added for this question
                             if answer_count < 2:
@@ -247,14 +267,17 @@ def add_question_and_answers(request, quiz_id):
 
                 messages.success(request, "Questions and answers added successfully.")
                 request.session['progress'] = 'questions_added'  # Update progress marker
+                print(f"Session progress set to: {request.session.get('progress')}")  # Debugging
                 return redirect('Coordinator:quiz_detail', quiz_id=quiz.id)
+
         except Exception as e:
             messages.error(request, f"Error adding questions and answers: {str(e)}")
+
     else:
         # Initialize an empty form for rendering
         question_form = QuestionForm()
-    return render(request, 'coordinator/add_question.html', {'quiz': quiz, 'question_form': question_form})
 
+    return render(request, 'coordinator/add_question.html', {'quiz': quiz, 'question_form': question_form})
 
 @login_required
 def quiz_detail(request, quiz_id):
@@ -359,7 +382,6 @@ class ReactAppView(TemplateView):
             return HttpResponse("React build not found. Check the build folder location.", status=501)
 
 
-
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def attempt_quiz(request, quiz_id):
@@ -426,6 +448,7 @@ def submit_quiz(request, quiz_id):
         return redirect('Coordinator:quiz_result', quiz_record_id=quiz_record.id)
 
     return redirect('Coordinator:attempt_quiz', quiz_id=quiz.id)
+
 
 def calculate_score(quiz, selected_answers):
     score = 0
