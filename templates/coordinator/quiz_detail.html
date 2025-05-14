@@ -1,8 +1,10 @@
+{% load static%}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'images/quizzes.jpg' %}">
     <title>{{ quiz.title }}</title>
     <style>
         /* General Styles */
@@ -79,7 +81,8 @@
         }
         history.pushState(null, null, location.href);
         window.onpopstate = function () {
-            history.go(1); // Forces the user to stay on the current page
+            history.go(1); 
+            /* // Forces the user to stay on the current page */
         };
 
     </style>

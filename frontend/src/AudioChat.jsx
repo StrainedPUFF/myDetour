@@ -281,7 +281,7 @@ const AudioChat = () => {
         audioContextRef.current = new AudioContext();
       }
 
-      await audioContextRef.current.audioWorklet.addModule('audio-processor.js');
+      await audioContextRef.current.audioWorklet.addModule('./audio-processor.js');
       const audioProcessor = new AudioWorkletNode(audioContextRef.current, 'audio-processor');
 
       const input = audioContextRef.current.createMediaStreamSource(stream);
