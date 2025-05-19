@@ -5,35 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{% static 'images/quizzes.jpg' %}">
+    <link rel="stylesheet" href="{% static 'action_taken.css' %}">
     <title>Attempt Quiz</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-        h1 {
-            text-align: center;
-        }
-        .question {
-            margin: 20px;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .submit-btn {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            margin: 20px auto;
-            background-color: #007BFF;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-    </style>
     <script>
     /* prevent the back button */
          history.pushState(null, null, location.href);
@@ -61,7 +34,7 @@
 
     </script>
 </head>
-<body>
+<body class="attempt_quizpage">
 
     <h1>{{ quiz.title }}</h1>
         <form method="POST" action="{% url 'Coordinator:submit_quiz' quiz.id %}">

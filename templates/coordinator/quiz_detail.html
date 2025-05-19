@@ -5,89 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{% static 'images/quizzes.jpg' %}">
+    <link rel="stylesheet" href="{% static 'action_created.css' %}">
     <title>{{ quiz.title }}</title>
-    <style>
-        /* General Styles */
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #e3fdfd, #ffe6fa); /* Gentle gradient */
-            margin: 0;
-            padding: 0;
-            color: #333;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 25px;
-            background-color: #ffffff;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        h1, h2 {
-            color: #4caf50; /* Positive green for titles */
-            text-align: center;
-        }
-
-        p {
-            font-size: 1.2em;
-            margin-bottom: 20px;
-            color: #555555;
-            text-align: center;
-        }
-
-        h3 {
-            color: #333333;
-            margin-top: 20px;
-            font-size: 1.4em;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-            margin-top: 10px;
-        }
-
-        li {
-            padding: 10px;
-            margin-bottom: 10px;
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-
-        li.correct {
-            background-color: #d4edda; /* Soft green for correct answers */
-            border-color: #c3e6cb;
-        }
-
-        a {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 12px 20px;
-            background-color: #4caf50;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 1em;
-            text-align: center;
-            transition: transform 0.2s ease, background-color 0.3s ease;
-        }
-
-        a:hover {
-            background-color: #3e8e41; /* Deeper green */
-            transform: scale(1.05);
-        }
+    <script>
         history.pushState(null, null, location.href);
         window.onpopstate = function () {
             history.go(1); 
             /* // Forces the user to stay on the current page */
         };
 
-    </style>
+    </script>
 </head>
-<body>
+<body class="quiz_detailpage">
     <div class="container">
         <h1>{{ quiz.title }}</h1>
         <p>{{ quiz.description }}</p>

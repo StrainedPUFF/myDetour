@@ -6,71 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{% static 'images/quizzes.jpg' %}">
     <title>Signup</title>
-    <link rel="stylesheet" href="{% static 'styles.css' %}">
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: url("{% static 'images/signup.jpg' %}") no-repeat center center fixed;
-            background-size: cover;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            color: #343a40;
-        }
-        .container {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 400px;
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #007bff;
-        }
-        .form-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-        .form-group label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: block;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 5px;
-        }
-        .form-group input.error {
-            border-color: #dc3545;
-        }
-        .form-group .error-message {
-            color: #dc3545;
-            font-size: 0.9em;
-            margin-top: 5px;
-        }
-        button[type="submit"] {
-            background-color: #007bff;
-            color: #ffffff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 1em;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            width: 100%;
-        }
-        button[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'access.css' %}">
     <script>
         // Prevent the back button
         history.pushState(null, null, location.href);
@@ -79,7 +15,7 @@
         };
     </script>
 </head>
-<body>
+<body class="signuppage">
     <div class="container">
         <h1>Signup</h1>
         <form method="post">

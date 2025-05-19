@@ -5,86 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{% static 'images/quizzes.jpg'%}">
-    <title>Quiz Result</title>
-    <style>
-        /* General Styles */
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #fdf1e3, #c3eafe); /* Uplifting gradient */
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .container {
-            max-width: 600px;
-            background-color: #ffffff;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        nav ul {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
-
-        nav ul li {
-            margin: 0 15px;
-        }
-
-        nav ul li a {
-            text-decoration: none;
-            font-size: 1.2em;
-            color: #4caf50;
-        }
-
-        nav ul li a:hover {
-            color: #3e8e41; /* Deeper green */
-        }
-
-        h1 {
-            font-size: 2.2em;
-            color: #4caf50; /* Positive green */
-            margin-bottom: 20px;
-        }
-
-        p {
-            font-size: 1.5em;
-            color: #555555;
-            margin-bottom: 30px;
-        }
-
-        .score {
-            font-size: 2.5em;
-            font-weight: bold;
-            color: #ff9800; /* Vibrant orange for focus */
-        }
-
-        a {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 12px 20px;
-            background-color: #4caf50; /* Friendly green */
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: transform 0.2s ease, background-color 0.3s ease;
-        }
-
-        a:hover {
-            background-color: #3e8e41; /* Deeper green */
-            transform: scale(1.05);
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'action_taken.css' %}">
+    <title>{{quiz.title}}</title>
     <script>
         // Prevent the back button
          history.pushState(null, null, location.href);
@@ -94,7 +16,7 @@
 
     </script>
 </head>
-<body>
+<body class="quiz_resultpage">
     <div class="container">
         <h1>Quiz Result</h1>
         <p>Your score:</p>

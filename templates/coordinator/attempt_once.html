@@ -5,57 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{%static 'images/quizzes.jpg'%}">
+    <link rel="stylesheet" href="{% static 'action_taken.css' %}">
     <title>Quiz Already Attempted</title>
-    <style>
-        /* General Styles */
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #ffe6fa, #e3fdfd); /* Calming gradient */
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .container {
-            max-width: 600px;
-            background-color: #ffffff;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        h1 {
-            font-size: 2em;
-            color: #ff4d4d; /* Soft red for warning */
-            margin-bottom: 20px;
-        }
-
-        p {
-            font-size: 1.2em;
-            color: #555555;
-            margin-bottom: 30px;
-        }
-
-        a {
-            display: inline-block;
-            padding: 12px 20px;
-            background-color: #4caf50; /* Friendly green */
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: transform 0.2s ease, background-color 0.3s ease;
-        }
-
-        a:hover {
-            background-color: #3e8e41; /* Deeper green */
-            transform: scale(1.05);
-        }
-    </style>
     <script>
                 // Prevent the back button
         history.pushState(null, null, location.href);
@@ -65,7 +16,7 @@
 
     </script>
 </head>
-<body>
+<body class="attempt_oncepage">
     <div class="container">
         <h1>Quiz Already Attempted</h1>
         <p>It looks like you've already attempted this quiz. You can only attempt each quiz once.</p>

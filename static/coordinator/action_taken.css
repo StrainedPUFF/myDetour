@@ -1,0 +1,158 @@
+    .attempt_quizpage{
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+        }
+        .question {
+            margin: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 20px auto;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }}
+    
+    .attempt_oncepage{
+        /* General Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ffe6fa, #e3fdfd); /* Calming gradient */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2em;
+            color: #ff4d4d; /* Soft red for warning */
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.2em;
+            color: #555555;
+            margin-bottom: 30px;
+        }
+
+        a {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: #4caf50; /* Friendly green */
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: transform 0.2s ease, background-color 0.3s ease;
+        }
+
+        a:hover {
+            background-color: #3e8e41; /* Deeper green */
+            transform: scale(1.05);
+        }}
+
+    .quiz_resultpage {
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+        /* General Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fdf1e3, #c3eafe); /* Uplifting gradient */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            font-size: 1.2em;
+            color: #4caf50;
+        }
+
+        nav ul li a:hover {
+            color: #3e8e41; /* Deeper green */
+        }
+
+        h1 {
+            font-size: 2.2em;
+            color: #4caf50; /* Positive green */
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.5em;
+            color: #555555;
+            margin-bottom: 30px;
+        }
+
+        .score {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #ff9800; /* Vibrant orange for focus */
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 20px;
+            background-color: #4caf50; /* Friendly green */
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: transform 0.2s ease, background-color 0.3s ease;
+        }
+
+        a:hover {
+            background-color: #3e8e41; /* Deeper green */
+            transform: scale(1.05);
+        }}

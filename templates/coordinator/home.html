@@ -5,86 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{% static 'images/quizzes.jpg' %}" />
+    <link rel="stylesheet" href="{% static 'access.css'%}">
     <title>Home - Virtual Learning Collaboration System</title>
-    <style>
-        /* General Styles */
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: #f8f9fa;
-            margin: 0;
-            padding: 0;
-        }
-        .nav img {
-        height: 50px;
-    }
-        .header {
-            background: linear-gradient(45deg, #007bff, #6c757d);
-            color: #ffffff;
-            text-align: center;
-            padding: 50px 20px;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 2.8em;
-        }
-        .header p {
-            font-size: 1.5em;
-            margin-top: 10px;
-        }
-        .hero-buttons {
-            margin-top: 20px;
-        }
-        .hero-buttons a {
-            color: #fff;
-            background-color: #17a2b8;
-            padding: 10px 30px;
-            margin: 0 10px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-size: 1.2em;
-            display: inline-block;
-            transition: background-color 0.3s;
-        }
-        .hero-buttons a:hover {
-            background-color: #138496;
-        }
-        .features {
-            display: flex;
-            justify-content: space-between;
-            padding: 40px 20px;
-            background-color: #ffffff;
-        }
-            /* Feature Section */
-        .feature {
-            text-align: center;
-            width: 30%;
-        }
-        .feature img {
-            width: 80px;
-            height: auto;
-        }
-        .feature h3 {
-            margin: 20px 0 10px;
-        }
-        /* Feature Card Styling */
-        .feature {
-            text-align: center;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .footer {
-            text-align: center;
-            padding: 20px;
-            background-color: #343a40;
-            color: #ffffff;
-            margin-top: 300px;
-            
-        }
-    </style>
 </head>
-<body>
+<body class="homepage">
     <nav class="nav">
         <img src="{% static 'images/quizzes.jpg'%}" alt="myDetour Logo">
         <!-- <ul>
