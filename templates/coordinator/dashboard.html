@@ -6,10 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{% static 'images/quizzes.jpg'%}">
     <title>Dashboard - Virtual Learning Collaboration System</title>
-    <link rel="stylesheet" href="{% static 'action_created.css' %}">
-    <script>
-
-    </script>
+    <link rel="stylesheet" href="{% static 'css/action_created.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #ff9d9d, #ffc4a3);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+    </style>
 </head>
 <div class="nav">
     <a href="{%url 'Coordinator:logout' %}">Logout</a>
@@ -105,7 +112,7 @@
         </div>
     </div>
     <div class="footer">
-        <p>&copy; 2025 Virtual Learning Collaboration System. All rights reserved.</p>
+        <p>&copy; 2025 myDetour. All rights reserved.</p>
     </div>
 </body>
 </html>

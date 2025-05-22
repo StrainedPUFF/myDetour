@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{% static 'images/quizzes.jpg' %}">
     <title>Signup</title>
-    <link rel="stylesheet" href="{% static 'access.css' %}">
+    <link rel="stylesheet" href="{% static 'css/access.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
     <script>
         // Prevent the back button
         history.pushState(null, null, location.href);
@@ -14,6 +15,20 @@
             history.go(1); // Forces the user to stay on the current page
         };
     </script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: url("{% static 'images/signup.jpg' %}") no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #343a40;
+        }
+    </style>
 </head>
 <body class="signuppage">
     <div class="container">

@@ -1,10 +1,10 @@
     .attempt_quizpage{
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
-        body {
+        /* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap'); */
+        /* body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             color: #333;
-        }
+        } */
         h1 {
             text-align: center;
         }
@@ -29,16 +29,16 @@
     
     .attempt_oncepage{
         /* General Styles */
-        body {
+        /* body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #ffe6fa, #e3fdfd); /* Calming gradient */
+            background: linear-gradient(135deg, #ffe6fa, #e3fdfd);
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-        }
+        } */
 
         .container {
             max-width: 600px;
@@ -78,18 +78,18 @@
         }}
 
     .quiz_resultpage {
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+        /* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap'); */
         /* General Styles */
-        body {
+        /* body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #fdf1e3, #c3eafe); /* Uplifting gradient */
+            background: linear-gradient(135deg, #fdf1e3, #c3eafe);
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-        }
+        } */
 
         .container {
             max-width: 600px;

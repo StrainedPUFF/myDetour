@@ -5,8 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{% static 'images/quizzes.jpg'%}">
-    <link rel="stylesheet" href="{% static 'action_taken.css' %}">
+    <link rel="stylesheet" href="{% static 'css/action_taken.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap">
     <title>{{quiz.title}}</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fdf1e3, #c3eafe);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+    </style>
     <script>
         // Prevent the back button
          history.pushState(null, null, location.href);

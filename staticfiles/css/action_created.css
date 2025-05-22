@@ -1,15 +1,14 @@
 
 .dashboardpage {
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    /* @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap'); */
 
-        body {
+        /* body {
             font-family: 'Roboto', sans-serif;
             background: linear-gradient(135deg, #ff9d9d, #ffc4a3);
-            /* background: url("{% static 'images/login.webp' %}"); */
             margin: 0;
             padding: 0;
             color: #333;
-        }
+        } */
         .header {
             background-color: #ff6363;
             color: #ffffff;
@@ -150,12 +149,11 @@
     }}
 
     .uploadpage {
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+    /* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap'); */
         /* General Styles */
-        body {
+        /* body {
             font-family: 'Poppins', sans-serif;
             background: url('/images/login.webp');
-            /* background: linear-gradient(135deg, #1e66d1, #7a5b03); Calming gradient */
             margin: 0;
             padding: 0;
             color: #333;
@@ -163,7 +161,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-        }
+        } */
         .container {
             max-width: 600px;
             background-color: #ffffff;
@@ -204,18 +202,18 @@
             transform: scale(1.05);
         }}
 
-        .add_questionpage {
+    .add_questionpage {
         /* General Styles */
-        body {
+        /* body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #e3fdfd, #ffe6fa); /* Calming gradient */
+            background: linear-gradient(135deg, #e3fdfd, #ffe6fa);
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-        }
+        } */
 
         .container {
             max-width: 800px;
@@ -289,15 +287,15 @@
         }}
 
     .quiz_detailpage{
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+        /* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap'); */
         /* General Styles */
-        body {
+        /* body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #e3fdfd, #ffe6fa); /* Gentle gradient */
+            background: linear-gradient(135deg, #e3fdfd, #ffe6fa);
             margin: 0;
             padding: 0;
             color: #333;
-        }
+        } */
 
         .container {
             max-width: 800px;

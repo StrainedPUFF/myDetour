@@ -1,6 +1,6 @@
     .reset_formpage{
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
-        body {
+        /* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap'); */
+        /* body {
             font-family: "Poppins", "Roboto", sans-serif;
             display: flex;
             flex-direction: column;
@@ -8,7 +8,7 @@
             align-items: center;
             height: 100vh;
             background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
-        }
+        } */
 
         form {
             background: #fff;
@@ -43,15 +43,15 @@
     }
 
     .reset_confirmpage{
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
-        body {
+        /* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap'); */
+        /* body {
             font-family: "Poppins", "Roboto", sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
-        }
+        } */
 
         .container {
             background: #fff;
@@ -109,12 +109,12 @@
     }
 
     .reset_donepage{
-        @import url('https://fonts.googleapis.com/css2?family=Arial:wght@400;700&display=swap');
-        body { 
+        /* @import url('https://fonts.googleapis.com/css2?family=Arial:wght@400;700&display=swap'); */
+        /* body { 
             font-family: Arial, sans-serif;
             text-align: center; 
             margin: 50px; 
-            }
+            } */
         a { 
             color: #007bff;
             text-decoration: none;
@@ -124,15 +124,15 @@
          }
     }
     .reset_completepage{
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
-        body {
+        /* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap'); */
+        /* body {
             font-family: "Poppins", "Roboto", sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
-        }
+        } */
 
         .container {
             background: #fff;

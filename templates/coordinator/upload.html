@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{% static 'images/quizzes.jpg'%}"> 
-    <link rel="stylesheet" href="{% static 'action_created.css'%}">
+    <link rel="stylesheet" href="{% static 'css/action_created.css'%}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
     <title>Upload Document</title>
     <script>
         // Prevent the back button
@@ -16,6 +17,20 @@
             };
         };
     </script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: url("{% static 'images/discussions.jpg' %}") no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+    </style>
 </head>
 <body class="uploadpage">
     <div class="container">
